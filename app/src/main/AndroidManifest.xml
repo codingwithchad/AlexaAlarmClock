@@ -16,6 +16,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".VoiceRecorder"
+            android:parentActivityName=".AlarmClock">
+            <meta-data android:name="andrpod.support.PARENT_ACTIVITY"
+                android:value=".VoiceRecorder"/>
+        <intent-filter>
+            <action android:name="android.intent.action.SEND"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </intent-filter>
+        </activity>
     </application>
 
 </manifest>
