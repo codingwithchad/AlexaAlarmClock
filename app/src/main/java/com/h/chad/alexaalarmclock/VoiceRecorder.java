@@ -103,7 +103,7 @@ public class VoiceRecorder extends AppCompatActivity{
 
                         fileSavePath =
                                 Environment.getExternalStorageDirectory().getAbsolutePath() +
-                                        "/" + timeforfile() + nameForFile + ".3gp";
+                                        "/" + timeforfile() + nameForFile + ".m4a";
                         Log.v(LOG_TAG, fileSavePath + " is the file save path");
                         mediaRecorder();
 
