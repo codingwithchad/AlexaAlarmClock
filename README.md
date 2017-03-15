@@ -1,6 +1,6 @@
 # AlexaAlarmClock
 
-When I got my Amazon Echo Dot for Christmas, I wanted to program Alexa to play my favorite from Amazon Prime Music to wake me up in the morning. The problem is, the Echo Dot's default alarm only plays sounds in the morning. I wanted to wake up to music. I also didn't want to wake up and yell commands to the other room for Alexa. I keep Electronics out of my bedroom, but with an external speaker, I can clearly hear my Echo Dot's music in my bedroom from my living room. I also keep my Android Phone charging in my living room, which is right next to my Echo Dot. 
+My wife got an Amazon Echo Dot for Christmas, I wanted to program Alexa to play music from Amazon Prime Music to wake me up in the morning. The problem is, the Echo Dot's default alarm only plays sounds in the morning. I wanted to wake up to music. I also didn't want to wake up and yell commands to the other room for Alexa. I keep Electronics out of my bedroom, but with an external speaker, I can clearly hear my Echo Dot's music in my bedroom from my living room. I also keep my Android Phone charging in my living room, which is right next to my Echo Dot. 
 I am not a morning person, I don't want to talk to Alexa or anyone else until after my first cup of coffee.
 
 I found a hack to record an MP3 of my voice giving Alexa the command to start music, put the mp3 file in my phone's Alarm section.
