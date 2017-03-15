@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+
 
 
     <application
@@ -31,6 +31,10 @@
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
         </activity>
+        <provider
+            android:authorities="com.h.chad.alexaalarmclock"
+            android:name=".data.AlarmProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
