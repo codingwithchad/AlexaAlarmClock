@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AlexaAlarmClock</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="recording_name">Recording Name</string>
+    <string name="play">Play Back</string>
 </resources>
