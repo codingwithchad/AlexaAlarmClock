@@ -1,13 +1,26 @@
 package com.h.chad.alexaalarmclock;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class AlarmClock extends AppCompatActivity {
+import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
+import com.h.chad.alexaalarmclock.data.AlarmContract;
+
+public class AlarmClock extends AppCompatActivity
+implements LoaderManager.LoaderCallbacks<Cursor>{
+
+    private static final String LOG_TAG = AlarmClock.class.getSimpleName();
+    private static final int URL_LOADER_ID = 1;
+    private AlarmCursorAdapter mAlarmCursorAdapter;
     FloatingActionButton fab;
 
 
@@ -31,5 +44,36 @@ public class AlarmClock extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri base = AlarmEntry.CONTENT_URI;
+        String [] projection = {
+                AlarmEntry._ID,
+                AlarmEntry.USER_DESCRIPTION,
+                AlarmEntry.FILE_NAME,
+                AlarmEntry.ALARM_ACTIVE,
+                AlarmEntry.ALARM_ACTIVE,
+                AlarmEntry.ALARM_TIME,
+                AlarmEntry.ALARM_DAYS
+        };
+        return new CursorLoader(
+                this,
+                base,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAlarmCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAlarmCursorAdapter.swapCursor(null);
     }
 }

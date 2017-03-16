@@ -7,20 +7,22 @@
     android:layout_height="match_parent"
     tools:context="com.h.chad.alexaalarmclock.AlarmClock">
     <ListView
+        android:id="@+id/alarm_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-
+    <!-- Empty Alarm Instructions -->
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:text="Getting Started"/>
+            android:text="@string/instructions"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
     </RelativeLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"

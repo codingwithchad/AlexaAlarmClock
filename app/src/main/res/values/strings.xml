@@ -4,4 +4,5 @@
     <string name="stop">Stop</string>
     <string name="recording_name">Recording Name</string>
     <string name="play">Play Back</string>
+    <string name="instructions">"Get started by adding an alarm\nClick the Button"</string>
 </resources>

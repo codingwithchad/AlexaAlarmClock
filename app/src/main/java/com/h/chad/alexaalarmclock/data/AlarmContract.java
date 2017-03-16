@@ -19,6 +19,8 @@ public class AlarmContract {
 
     public final static class AlarmEntry implements BaseColumns{
 
+        public final static Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ALARMS);
+
         public final static String TABLE_NAME = "alarms";               //table name
         public final static String _ID = BaseColumns._ID;               //ID
         public final static String USER_DESCRIPTION = "description";    //Description from user
