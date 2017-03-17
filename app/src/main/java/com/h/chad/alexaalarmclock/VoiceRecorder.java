@@ -53,6 +53,7 @@ public class VoiceRecorder extends AppCompatActivity{
     private TextView mMinutes;
     protected int mHoursForDB;
     protected int mMinutesForDB;
+    private Button mSaveButton;
 
     public final static String LOG_TAG = VoiceRecorder.class.getSimpleName();
     public final static int REQUEST_PERMISSION_CODE = 1;
@@ -68,6 +69,7 @@ public class VoiceRecorder extends AppCompatActivity{
         recordingLength = (Chronometer) findViewById(R.id.record_timer);
         mMinutes = (TextView)findViewById(R.id.tv_minutes);
         mHours = (TextView) findViewById(R.id.tv_hours);
+        mSaveButton = (Button) findViewById(R.id.button_save);
         buttonRecordingPressed();
         playRecording();
         timeClicked();
@@ -225,6 +227,12 @@ public class VoiceRecorder extends AppCompatActivity{
     private void saveButtonClicked() {
         mHoursForDB = Integer.parseInt(mHours.getText().toString().trim());
         mMinutesForDB = Integer.parseInt(mMinutes.getText().toString().trim());
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO (NEXT) save the data to the database
+            }
+        });
 
     }
 
