@@ -6,43 +6,123 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <EditText
         android:id="@+id/alarm_title"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:hint="@string/recording_name"
-        />
-    <TextView
-        android:id="@+id/timeLength"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/alarm_title"
-        android:layout_centerHorizontal="true"
         android:paddingTop="20dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:text="0.0"/>
-
+        />
     <Button
         android:id="@+id/record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/record"
         android:background="@color/recordGreen"
-        android:layout_below="@+id/timeLength"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-         />
+        android:layout_below="@+id/alarm_title"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"/>
+    <TextView
+        android:id="@+id/recordingLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recording_length"
+        android:layout_toRightOf="@+id/record"
+        android:layout_toLeftOf="@+id/playBack"
+        android:layout_below="@+id/alarm_title"
+        android:layout_marginTop="10dp"
+        android:gravity="center"/>
+    <Chronometer
+        android:id="@+id/record_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/record"
+        android:layout_toLeftOf="@+id/playBack"
+       android:gravity="center"
+        android:layout_below="@+id/recordingLength"
+        android:paddingTop="10dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:format="%s"/>
     <Button
         android:id="@+id/playBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/play"
         android:background="@color/recordGreen"
-        android:layout_below="@+id/record"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/alarm_title"
         android:layout_marginTop="10dp"
-        />
+        android:layout_alignRight="@+id/alarm_title"
+        android:layout_alignEnd="@+id/alarm_title" />
+
+    <LinearLayout
+        android:id="@+id/time_selected"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/playBack"
+        android:layout_marginTop="50dp">
+        <TextView
+            android:id="@+id/tv_hours"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:text="02"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+        <TextView
+            android:id="@+id/tv_minutes"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:layout_height="wrap_content"
+            android:text=":30"
+            android:textSize="30sp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@+id/time_selected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center">
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Monday"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Tuesday"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Wednesday"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Thursday"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Friday"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Saturday"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Sunday"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

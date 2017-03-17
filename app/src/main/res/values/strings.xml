@@ -2,7 +2,17 @@
     <string name="app_name">AlexaAlarmClock</string>
     <string name="record">Record</string>
     <string name="stop">Stop</string>
-    <string name="recording_name">Recording Name</string>
+    <string name="recording_name">Alarm Title</string>
     <string name="play">Play Back</string>
     <string name="instructions">"Get started by adding an alarm\nClick the Button"</string>
+    <string name="recording_length">Recoding Length</string>
+
+    <!-- Days of the week -->
+    <string name="Monday">M</string>
+    <string name="Tuesday">Tu</string>
+    <string name="Wednesday">W</string>
+    <string name="Thursday">Th</string>
+    <string name="Friday">F</string>
+    <string name="Saturday">Sa</string>
+    <string name="Sunday">Su</string>
 </resources>

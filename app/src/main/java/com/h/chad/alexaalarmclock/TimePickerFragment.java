@@ -42,6 +42,6 @@ public class TimePickerFragment extends DialogFragment
         mTvMinutes = (TextView)getActivity().findViewById(R.id.tv_minutes);
         mTvHours.setText(String.valueOf(hour)+":");
         mTvMinutes.setText(String.valueOf(min));
-
     }
+
 }
