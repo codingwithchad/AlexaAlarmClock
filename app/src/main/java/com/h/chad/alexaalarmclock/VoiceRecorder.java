@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -43,17 +44,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static android.media.CamcorderProfile.get;
 
 /**
  * Created by chad on 3/14/2017.
  */
 
-public class VoiceRecorder extends AppCompatActivity
-    implements LoaderManager.LoaderCallbacks<Cursor>{
+public class VoiceRecorder extends AppCompatActivity{
 
     private MediaRecorder voiceRecorder;
     private MediaPlayer testRecording;
@@ -73,6 +75,13 @@ public class VoiceRecorder extends AppCompatActivity
     private EditText recordingName;
     private TextView mHours;
     private TextView mMinutes;
+    private CheckBox mon;
+    private CheckBox tue;
+    private CheckBox wed;
+    private CheckBox thu;
+    private CheckBox fri;
+    private CheckBox sat;
+    private CheckBox sun;
 
     public final static String LOG_TAG = VoiceRecorder.class.getSimpleName();
     public final static int REQUEST_PERMISSION_CODE = 1;
@@ -83,41 +92,35 @@ public class VoiceRecorder extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice_recorder);
+
+        linkVariables();            //Get all the member variables set attached from the view
+        setCurrentTime();           //Set the clock to the current time
+        buttonRecordingPressed();   //When the recording button is pressed
+        playRecording();            //When the playback button is pressed
+        timeClicked();              //When time is clicked, opens TimePickerFragment
+        saveButtonClicked();        //When save is pressed
+    }
+
+    private void linkVariables() {
         startRecording = (Button) findViewById(R.id.record);
         playBack = (Button) findViewById(R.id.playBack);
         recordingLength = (Chronometer) findViewById(R.id.record_timer);
         mMinutes = (TextView)findViewById(R.id.tv_minutes);
         mHours = (TextView) findViewById(R.id.tv_hours);
         mSaveButton = (Button) findViewById(R.id.button_save);
-        buttonRecordingPressed();
-        playRecording();
-        timeClicked();
-        saveButtonClicked();
-
-
+        mon = (CheckBox) findViewById(R.id.cb_monday);
+        tue = (CheckBox) findViewById(R.id.cb_tuesday);
+        wed = (CheckBox) findViewById(R.id.cb_wednesday);
+        thu = (CheckBox) findViewById(R.id.cb_thursday);
+        fri = (CheckBox) findViewById(R.id.cb_friday);
+        sat = (CheckBox) findViewById(R.id.cb_saturday);
+        sun = (CheckBox) findViewById(R.id.cb_sunday);
     }
 
-
-
-    private void playRecording() {
-        playBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) throws
-                    IllegalArgumentException,
-                    SecurityException,
-                    IllegalStateException {
-                testRecording = new MediaPlayer();
-                try {
-                    testRecording.setDataSource(fileSavePath);
-                    testRecording.prepare();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                testRecording.start();
-                Toast.makeText(VoiceRecorder.this, "Playing Back Recording", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void setCurrentTime() {
+        Calendar c = Calendar.getInstance();
+        mHours.setText(Integer.toString(c.get(Calendar.HOUR_OF_DAY)));
+        mMinutes.setText(Integer.toString(c.get(Calendar.MINUTE)));
     }
 
     private void buttonRecordingPressed() {
@@ -143,7 +146,8 @@ public class VoiceRecorder extends AppCompatActivity
                         fileSavePath =
                                 Environment.getExternalStorageDirectory().getAbsolutePath() +
                                         "/" + timeforfile() + nameForFile + ".m4a";
-                        Log.v(LOG_TAG, fileSavePath + " is the file save path");
+                        ///storage/emulated/0/15_27_05_18_03_2017ggh.m4a is the file save path
+                        Log.e(LOG_TAG, fileSavePath + " is the file save path");
                         mediaRecorder();
 
                         try {
@@ -173,6 +177,29 @@ public class VoiceRecorder extends AppCompatActivity
             }
         });
     }
+    //Ability to test the recording before putting it in the database
+    private void playRecording() {
+        playBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) throws
+                    IllegalArgumentException,
+                    SecurityException,
+                    IllegalStateException {
+                testRecording = new MediaPlayer();
+                try {
+                    testRecording.setDataSource(fileSavePath);
+                    testRecording.prepare();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                testRecording.start();
+                Toast.makeText(VoiceRecorder.this, "Playing Back Recording", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(VoiceRecorder.this, new
@@ -270,13 +297,7 @@ public class VoiceRecorder extends AppCompatActivity
 
     public int[] daysOfTheWeek(){
         int[] days = new int[7];
-        CheckBox mon = (CheckBox) findViewById(R.id.cb_monday);
-        CheckBox tue = (CheckBox) findViewById(R.id.cb_tuesday);
-        CheckBox wed = (CheckBox) findViewById(R.id.cb_wednesday);
-        CheckBox thu = (CheckBox) findViewById(R.id.cb_thursday);
-        CheckBox fri = (CheckBox) findViewById(R.id.cb_friday);
-        CheckBox sat = (CheckBox) findViewById(R.id.cb_saturday);
-        CheckBox sun = (CheckBox) findViewById(R.id.cb_sunday);
+
         days[0] = (mon.isChecked()) ? 1 : 0;
         days[1] = (tue.isChecked()) ? 1 : 0;
         days[2] = (wed.isChecked()) ? 1 : 0;
@@ -286,7 +307,7 @@ public class VoiceRecorder extends AppCompatActivity
         days[6] = (sun.isChecked()) ? 1 : 0;
         return days;
     }
-
+/*
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String projection[] = {
@@ -328,6 +349,13 @@ public class VoiceRecorder extends AppCompatActivity
         recordingName.setText("");
         mHours.setText("");
         mMinutes.setText("");
+        mon.setChecked(false);
+        tue.setChecked(false);
+        wed.setChecked(false);
+        thu.setChecked(false);
+        fri.setChecked(false);
+        sat.setChecked(false);
+        sun.setChecked(false);
 
-    }
+    }*/
 }

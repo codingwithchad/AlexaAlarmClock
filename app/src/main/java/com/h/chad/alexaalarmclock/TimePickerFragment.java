@@ -16,7 +16,6 @@ import java.util.Calendar;
 
 public class TimePickerFragment extends DialogFragment
     implements TimePickerDialog.OnTimeSetListener{
-
     private TextView mTvHours;
     private TextView mTvMinutes;
 
@@ -40,8 +39,7 @@ public class TimePickerFragment extends DialogFragment
     public void onTimeSet(TimePicker timePicker, int hour, int min) {
         mTvHours = (TextView) getActivity().findViewById(R.id.tv_hours);
         mTvMinutes = (TextView)getActivity().findViewById(R.id.tv_minutes);
-        mTvHours.setText(String.valueOf(hour)+":");
+        mTvHours.setText(String.valueOf(hour));
         mTvMinutes.setText(String.valueOf(min));
     }
-
 }
