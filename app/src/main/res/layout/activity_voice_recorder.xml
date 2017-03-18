@@ -102,30 +102,37 @@
         android:layout_below="@+id/time_selected"
         android:gravity="center">
         <CheckBox
+            android:id="@+id/cb_monday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Monday"/>
         <CheckBox
+            android:id="@+id/cb_tuesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Tuesday"/>
         <CheckBox
+            android:id="@+id/cb_wednesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Wednesday"/>
         <CheckBox
+            android:id="@+id/cb_thursday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Thursday"/>
         <CheckBox
+            android:id="@+id/cb_friday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Friday"/>
         <CheckBox
+            android:id="@+id/cb_saturday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Saturday"/>
         <CheckBox
+            android:id="@+id/cb_sunday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Sunday"/>
