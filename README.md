@@ -7,18 +7,19 @@ I found a hack to record an MP3 of my voice giving Alexa the command to start mu
 Then at my wake-up alarm time my Mp3 file of my command goes off and Alexa plays music. The hack workedm but it is a lot of work, The next day I wanted a different station, or during a winter storm, I wanted to wake up to the news weather and traffic (ALEXA,  play KOMO radio) one day and music (ALEXA, Play lindsey Sterling) the next. Also my command in mp3 on my phone repeats and repeats until I get up and turn it off. (Alexa, Play Lindsey Sterling)(Alexa, Play Lindsey Sterline) (Alexa Play Lindsey Sterline).....that was aweful, so I get to the next room I have my music station playing, along with my command repeating and repeating!
 
 So I came up with the idea of The Alexa Alarm Clock. I want to 
-
 1) record my voice giving Alexa a command.
 2) Play back once the command at a set time
 3) Stack commands, such as:
-  6:45AM: Alexa, Start the Coffee.
-  (wait for response) 
+  A) 6:45AM: Alexa, Start the Coffee.
+    (wait for response) 
     -Coffee maker will be going
-  7:00AM: Alexa, play Lindsey Sterling. 
+  B) 7:00AM: Alexa, Turn on Bedroom Lights
+    (wait for response)
+  C) 7:00AM: Alexa, play Lindsey Sterling. 
   (wait for response)
-    -Music will be playing
-  (give me 5 minutes to wake up)
-  Alexa, What is on my schedule today?
+    -Lights will be on and music will be playing
+   (5 minutes to be more mentally awake)
+  D) 7:05 Alexa, What is on my schedule today?
     -Alexa reads my schedule with music in the background
     -Lindsey Sterling Continues.
 4) All this happens with some set-up, but I don't need to be present. (mentally)
