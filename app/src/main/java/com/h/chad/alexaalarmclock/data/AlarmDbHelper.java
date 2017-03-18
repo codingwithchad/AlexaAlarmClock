@@ -13,7 +13,7 @@ public class AlarmDbHelper  extends SQLiteOpenHelper{
 
     private final static String LOG_TAG = AlarmDbHelper.class.getName();
     private final static String DATABASE_NAME = "alexaAlarm.db";
-    private final static int DATABASE_VERSION = 1;
+    private final static int DATABASE_VERSION = 2;
 
     public AlarmDbHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,13 +27,14 @@ public class AlarmDbHelper  extends SQLiteOpenHelper{
                 AlarmEntry.USER_DESCRIPTION + " TEXT NOT NULL, " +
                 AlarmEntry.FILE_NAME + " TEXT NOT NULL, " +
                 AlarmEntry.ALARM_ACTIVE + "INTEGER NOT NULL, " +
-                AlarmEntry.ALARM_TIME + " TEXT NOT NULL, " +
-                AlarmEntry.ALARM_DAYS + " INTEGER);";
+                AlarmEntry.ALARM_HOUR + " INTEGER NOT NULL, " +
+                AlarmEntry.ALARM_MINUTE + " INTEGER NOT NULL, " +
+                AlarmEntry.ALARM_DAYS + " TEXT);";
         db.execSQL(SQL_CREATE_TABLE);
 
 
     }
-    //Currently on version 1
+    //Currently on version 2
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         String SQL_DROP_TABLE = "DROP TABLE " + AlarmEntry.TABLE_NAME;

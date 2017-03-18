@@ -194,9 +194,9 @@ public class VoiceRecorder extends AppCompatActivity{
         voiceRecorder = new MediaRecorder();
         voiceRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         voiceRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        voiceRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        voiceRecorder.setAudioEncodingBitRate(16);
+        voiceRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         voiceRecorder.setAudioSamplingRate(44100);
+        voiceRecorder.setAudioEncodingBitRate(96000);
         voiceRecorder.setOutputFile(fileSavePath);
 
     }

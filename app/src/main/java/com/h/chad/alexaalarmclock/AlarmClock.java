@@ -55,7 +55,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
                 AlarmEntry.FILE_NAME,
                 AlarmEntry.ALARM_ACTIVE,
                 AlarmEntry.ALARM_ACTIVE,
-                AlarmEntry.ALARM_TIME,
+                AlarmEntry.ALARM_HOUR,
+                AlarmEntry.ALARM_MINUTE,
                 AlarmEntry.ALARM_DAYS
         };
         return new CursorLoader(

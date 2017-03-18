@@ -75,12 +75,18 @@
             android:text="02"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="30sp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+        <TextView
             android:id="@+id/tv_minutes"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="left"
             android:layout_height="wrap_content"
-            android:text=":30"
+            android:text="30"
             android:textSize="30sp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
 

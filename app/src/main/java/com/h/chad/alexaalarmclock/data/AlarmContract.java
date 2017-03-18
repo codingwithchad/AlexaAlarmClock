@@ -26,7 +26,8 @@ public class AlarmContract {
         public final static String USER_DESCRIPTION = "description";    //Description from user
         public final static String FILE_NAME = "filename";              //Name of the file
         public final static String ALARM_ACTIVE = "active";             //is the alarm active
-        public final static String ALARM_TIME = "alarmtime";            //Description from user
+        public final static String ALARM_HOUR = "alarmhour";            //Description from user
+        public final static String ALARM_MINUTE = "alarmminute";
         public final static String ALARM_DAYS = "alarmdays";            //Description from user
 
         //return value for getType in AlarmProvider
