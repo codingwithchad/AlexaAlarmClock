@@ -289,16 +289,11 @@ public class VoiceRecorderActivity extends AppCompatActivity{
                 ContentValues values = new ContentValues();
                 int duration = Toast.LENGTH_SHORT;
                 Context c = getApplicationContext();
-
-
             }
         });
-
     }
-
     public int[] daysOfTheWeek(){
         int[] days = new int[7];
-
         days[0] = (mon.isChecked()) ? 1 : 0;
         days[1] = (tue.isChecked()) ? 1 : 0;
         days[2] = (wed.isChecked()) ? 1 : 0;

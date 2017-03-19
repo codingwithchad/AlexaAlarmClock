@@ -21,7 +21,6 @@ public class TimePickerFragment extends DialogFragment
 
     //constructor is empty
     public TimePickerFragment(){
-
     }
 
     @Override
