@@ -9,6 +9,7 @@ import android.support.compat.BuildConfig;
 
 /**
  * Created by chad on 3/15/2017.
+ *
  */
 
 public class AlarmContract {
