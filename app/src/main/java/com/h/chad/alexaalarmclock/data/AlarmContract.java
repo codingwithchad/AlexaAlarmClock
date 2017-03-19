@@ -2,8 +2,10 @@ package com.h.chad.alexaalarmclock.data;
 
 import android.graphics.Path;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.BaseColumns;
 import android.content.ContentResolver;
+import android.support.compat.BuildConfig;
 
 /**
  * Created by chad on 3/15/2017.
@@ -13,7 +15,7 @@ public class AlarmContract {
     //to prevent someone from creating the AlarmContract class
     private AlarmContract(){}
 
-    public final static String CONTENT_AUTHORITY = "com.h.chad.alexaalarmclock";
+    public final static String CONTENT_AUTHORITY = BuildConfig.APPLICATION_ID;
     public final static Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public final static String PATH_ALARMS = "alarms";
 

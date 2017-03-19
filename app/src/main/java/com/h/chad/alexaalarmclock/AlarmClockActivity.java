@@ -3,6 +3,7 @@ package com.h.chad.alexaalarmclock;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.AlarmClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -15,14 +16,13 @@ import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract;
 
-public class AlarmClock extends AppCompatActivity
+public class AlarmClockActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String LOG_TAG = AlarmClock.class.getSimpleName();
     private static final int URL_LOADER_ID = 1;
     private AlarmCursorAdapter mAlarmCursorAdapter;
     FloatingActionButton fab;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent toRecorderIntent = new Intent(AlarmClock.this, VoiceRecorder.class);
+                Intent toRecorderIntent = new Intent(AlarmClockActivity.this, VoiceRecorder.class);
                 startActivity(toRecorderIntent);
             }
         });

@@ -52,10 +52,11 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static android.media.CamcorderProfile.get;
 
 /**
- * Created by chad on 3/14/2017.
+ * Created by Chad H. Glaser on 3/14/2017.
+ *
  */
 
-public class VoiceRecorder extends AppCompatActivity{
+public class VoiceRecorderActivity extends AppCompatActivity{
 
     private MediaRecorder voiceRecorder;
     private MediaPlayer testRecording;
@@ -83,7 +84,7 @@ public class VoiceRecorder extends AppCompatActivity{
     private CheckBox sat;
     private CheckBox sun;
 
-    public final static String LOG_TAG = VoiceRecorder.class.getSimpleName();
+    public final static String LOG_TAG = VoiceRecorderActivity.class.getSimpleName();
     public final static int REQUEST_PERMISSION_CODE = 1;
     private boolean recordingInProgress = false;
 
@@ -194,7 +195,7 @@ public class VoiceRecorder extends AppCompatActivity{
                     e.printStackTrace();
                 }
                 testRecording.start();
-                Toast.makeText(VoiceRecorder.this, "Playing Back Recording", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VoiceRecorderActivity.this, "Playing Back Recording", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -202,7 +203,7 @@ public class VoiceRecorder extends AppCompatActivity{
 
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(VoiceRecorder.this, new
+        ActivityCompat.requestPermissions(VoiceRecorderActivity.this, new
                 String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, REQUEST_PERMISSION_CODE);
     }
 
@@ -218,10 +219,10 @@ public class VoiceRecorder extends AppCompatActivity{
                     boolean recordPermission = grantResults[1] ==
                             PackageManager.PERMISSION_GRANTED;
                     if (storagePermission && recordPermission) {
-                        Toast.makeText(VoiceRecorder.this, "Permission Granted",
+                        Toast.makeText(getApplicationContext(), "Permission Granted",
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(VoiceRecorder.this, "Permission Denied",
+                        Toast.makeText(getApplicationContext(), "Permission Denied",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -287,7 +288,7 @@ public class VoiceRecorder extends AppCompatActivity{
             public void onClick(View view) {
                 ContentValues values = new ContentValues();
                 int duration = Toast.LENGTH_SHORT;
-                Context c = VoiceRecorder.this;
+                Context c = getApplicationContext();
 
 
             }
