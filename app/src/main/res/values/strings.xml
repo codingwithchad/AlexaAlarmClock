@@ -15,4 +15,15 @@
     <string name="Friday">F</string>
     <string name="Saturday">Sa</string>
     <string name="Sunday">Su</string>
+
+    <!--Error messages for database entry -->
+    <string name="need_description">Need a description for the alarm</string>
+    <string name="needfilesavepath">Need a file name for the alarm</string>
+    <string name="houroutofbounds">Hour needs to be between 0 and 24</string>
+    <string name="minuteoutofbounds">Minute needs to be between 0 and 59</string>
+    <string name="days_of_week_error">Days of the week failed to input in the database</string>
+    <string name="fail_inserting">Failed to insert the new alarm</string>
+    <string name="success_inserting">Success inserting the new alarm</string>
+    <string name="fail_updating">Failed to updating the alarm</string>
+    <string name="success_updating">Success updating the alarm</string>
 </resources>

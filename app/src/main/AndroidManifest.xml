@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AlarmClock">
+        <activity android:name=".AlarmClockActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,8 +21,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".VoiceRecorder"
-            android:parentActivityName=".AlarmClock">
+        <activity android:name=".VoiceRecorderActivity"
+            android:parentActivityName=".AlarmClockActivity">
             <meta-data android:name="andrpod.support.PARENT_ACTIVITY"
                 android:value=".VoiceRecorder"/>
         <intent-filter>

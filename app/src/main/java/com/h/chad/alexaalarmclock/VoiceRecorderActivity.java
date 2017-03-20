@@ -1,6 +1,7 @@
 package com.h.chad.alexaalarmclock;
 
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
@@ -48,6 +50,7 @@ import java.util.TimeZone;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.R.attr.path;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static android.media.CamcorderProfile.get;
 
@@ -73,7 +76,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
     private Button mSaveButton;
     private Uri mCurrentAlarmUri;
 
-    private EditText recordingName;
+    private EditText mRecordingName;
     private TextView mHours;
     private TextView mMinutes;
     private CheckBox mon;
@@ -103,6 +106,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
     }
 
     private void linkVariables() {
+        mRecordingName = (EditText)findViewById(R.id.alarm_title);
         startRecording = (Button) findViewById(R.id.record);
         playBack = (Button) findViewById(R.id.playBack);
         recordingLength = (Chronometer) findViewById(R.id.record_timer);
@@ -130,8 +134,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
             public void onClick(View view) {
                 if (checkPermissions()) {
                     if (recordingInProgress == false) {
-                        recordingName = (EditText) findViewById(R.id.alarm_title);
-                        String nameForFile = recordingName.getText().toString();
+                        String nameForFile = mRecordingName.getText().toString();
 
                         if (nameForFile.isEmpty() || nameForFile.length() == 0) {
                             Toast.makeText(getApplicationContext(), "Need a name", Toast.LENGTH_LONG).show();
@@ -148,7 +151,8 @@ public class VoiceRecorderActivity extends AppCompatActivity{
                                 Environment.getExternalStorageDirectory().getAbsolutePath() +
                                         "/" + timeforfile() + nameForFile + ".m4a";
                         ///storage/emulated/0/15_27_05_18_03_2017ggh.m4a is the file save path
-                        Log.e(LOG_TAG, fileSavePath + " is the file save path");
+                        //Keeping log message here to track file sizes later.
+                        Log.e("***** " +LOG_TAG, fileSavePath + " is the file save path********");
                         mediaRecorder();
 
                         try {
@@ -252,7 +256,6 @@ public class VoiceRecorderActivity extends AppCompatActivity{
         voiceRecorder.setAudioSamplingRate(44100);
         voiceRecorder.setAudioEncodingBitRate(96000);
         voiceRecorder.setOutputFile(fileSavePath);
-
     }
 
     //Takes no input
@@ -279,9 +282,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
         });
     }
     private void saveButtonClicked() {
-        mHoursForDB = Integer.parseInt(mHours.getText().toString().trim());
-        mMinutesForDB = Integer.parseInt(mMinutes.getText().toString().trim());
-        Arrays.toString(daysOfTheWeek());
+
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,6 +290,59 @@ public class VoiceRecorderActivity extends AppCompatActivity{
                 ContentValues values = new ContentValues();
                 int duration = Toast.LENGTH_SHORT;
                 Context c = getApplicationContext();
+
+                String user_description = mRecordingName.getText().toString().trim();
+                if(TextUtils.isEmpty(user_description) || user_description.length() <=0 ){
+                    Toast.makeText(c, getText(R.string.need_description), duration).show();
+                    return;
+                }else{
+                    values.put(AlarmEntry.USER_DESCRIPTION, user_description);
+                }
+                String fileNameForDb = fileSavePath;
+                if(TextUtils.isEmpty(fileNameForDb) || fileNameForDb.length() <= 0){
+                    Toast.makeText(c, getText(R.string.needfilesavepath), duration).show();
+                    return;
+                }else {
+                    values.put(AlarmEntry.FILE_NAME, fileNameForDb);
+                }
+                values.put(AlarmEntry.ALARM_ACTIVE, 1);
+                mHoursForDB = Integer.parseInt(mHours.getText().toString().trim());
+                if(mHoursForDB < 0 || mHoursForDB > 24){
+                    Toast.makeText(c, getText(R.string.houroutofbounds), duration).show();
+                }else {
+                 values.put(AlarmEntry.ALARM_HOUR, mHoursForDB);
+                }
+                mMinutesForDB = Integer.parseInt(mMinutes.getText().toString().trim());
+                if(mMinutesForDB < 0 || mMinutesForDB > 59){
+                    Toast.makeText(c, getText(R.string.minuteoutofbounds), duration).show();
+                }else{
+                    values.put(AlarmEntry.ALARM_MINUTE, mMinutesForDB);
+                }
+                String daysForDatabase = Arrays.toString(daysOfTheWeek());
+                if(TextUtils.isEmpty(daysForDatabase) || daysForDatabase.length() <= 0){
+                    Toast.makeText(c, getText(R.string.days_of_week_error), duration).show();
+                }else{
+                    values.put(AlarmEntry.ALARM_DAYS, daysForDatabase);
+                }
+                //Adding a new alarm if mCurrentAlarmUri is null
+                if(mCurrentAlarmUri == null){
+                    Uri newUri = getContentResolver().insert(
+                            AlarmEntry.CONTENT_URI, values);
+                    if(newUri == null){
+                        Toast.makeText(c, getText(R.string.fail_inserting), duration).show();
+                    }else{
+                        Toast.makeText(c, getText(R.string.success_inserting), duration).show();
+                    }
+                }else{
+                    int rowsAffected = getContentResolver().update(
+                            mCurrentAlarmUri, values, null, null);
+                    if(rowsAffected == 0){
+                        Toast.makeText(c, getText(R.string.fail_updating), duration).show();
+                    }else{
+                        Toast.makeText(c, getText(R.string.success_updating), duration).show();
+                    }
+                }
+            finish();
             }
         });
     }

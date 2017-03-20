@@ -15,8 +15,7 @@ import android.support.compat.BuildConfig;
 public class AlarmContract {
     //to prevent someone from creating the AlarmContract class
     private AlarmContract(){}
-
-    public final static String CONTENT_AUTHORITY = BuildConfig.APPLICATION_ID;
+    public final static String CONTENT_AUTHORITY = "com.h.chad.alexaalarmclock";
     public final static Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public final static String PATH_ALARMS = "alarms";
 

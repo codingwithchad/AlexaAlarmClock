@@ -39,7 +39,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent toRecorderIntent = new Intent(AlarmClockActivity.this, VoiceRecorder.class);
+                Intent toRecorderIntent = new Intent(AlarmClockActivity.this, VoiceRecorderActivity.class);
                 startActivity(toRecorderIntent);
             }
         });
