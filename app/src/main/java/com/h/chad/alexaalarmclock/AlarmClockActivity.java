@@ -1,20 +1,21 @@
 package com.h.chad.alexaalarmclock;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
+import android.content.CursorLoader;
 import android.net.Uri;
 import android.provider.AlarmClock;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ListView;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
-import com.h.chad.alexaalarmclock.data.AlarmContract;
+
 
 public class AlarmClockActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -28,7 +29,14 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_clock);
-        setupFAB(); //function for the FAB's onclick listener.
+
+        setupFAB();                 //function for the FAB's onclick listener.
+        ListView lvAlarms = (ListView)findViewById(R.id.alarm_list);
+        lvAlarms.setEmptyView(findViewById(R.id.empty_list));
+        mAlarmCursorAdapter = new AlarmCursorAdapter(this, null);
+        lvAlarms.setAdapter(mAlarmCursorAdapter);
+
+        getLoaderManager().initLoader(URL_LOADER_ID, null, this);
 
     }
 
@@ -53,7 +61,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
                 AlarmEntry._ID,
                 AlarmEntry.USER_DESCRIPTION,
                 AlarmEntry.FILE_NAME,
-                AlarmEntry.ALARM_ACTIVE,
                 AlarmEntry.ALARM_ACTIVE,
                 AlarmEntry.ALARM_HOUR,
                 AlarmEntry.ALARM_MINUTE,

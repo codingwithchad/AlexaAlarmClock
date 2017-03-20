@@ -152,7 +152,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
                                         "/" + timeforfile() + nameForFile + ".m4a";
                         ///storage/emulated/0/15_27_05_18_03_2017ggh.m4a is the file save path
                         //Keeping log message here to track file sizes later.
-                        Log.e("***** " +LOG_TAG, fileSavePath + " is the file save path********");
+                        Log.e("***** " +LOG_TAG, "FileSavePath: " +fileSavePath + "***** ");
                         mediaRecorder();
 
                         try {
