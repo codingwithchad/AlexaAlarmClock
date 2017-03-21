@@ -1,44 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <CheckBox
         android:id="@+id/checkbox_on_off"
+        android:layout_alignParentStart="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:gravity="left"/>
-    <TextView
-        android:id="@+id/textview_user_description"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="5dp"
+        android:text="Make Coffee"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+    <!-- Alarm Time -->
+    <LinearLayout
+        android:id="@+id/alarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/button_test_sound"
+        android:orientation="horizontal"
+        android:paddingRight="30dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/textview_alarm_hour"
+            style="@style/AlarmTimes"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="1"/>
+
+        <TextView
+            android:id="@+id/textview_alarm_colon"
+            style="@style/AlarmTimes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textview_alarm_minute"
+            style="@style/AlarmTimes"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="45"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <!-- Days of the week -->
+    <LinearLayout
+        android:id="@+id/days_of_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/alarm_time"
+        android:layout_marginEnd="5dp"
         android:paddingRight="10dp"
-        android:text="hello world"/>
-    <TextView
-        android:id="@+id/textview_alarm_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:paddingRight="10dp"
-        android:text="12:45"/>
-    <TextView
-        android:id="@+id/textview_alarm_days"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:text="M T W Th F Sa Su"/>
+        android:layout_toStartOf="@+id/button_test_sound"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/textview_Monday"
+            style="@style/days_of_week"
+            android:text="@string/Monday" />
+
+        <TextView
+            android:id="@+id/textview_Tueday"
+            style="@style/days_of_week"
+            android:text="@string/Tuesday" />
+
+        <TextView
+            android:id="@+id/textview_Wednesday"
+            style="@style/days_of_week"
+            android:text="@string/Wednesday" />
+
+        <TextView
+            android:id="@+id/textview_Thursday"
+            style="@style/days_of_week"
+            android:text="@string/Thursday" />
+
+        <TextView
+            android:id="@+id/textview_Friday"
+            style="@style/days_of_week"
+
+            android:text="@string/Friday" />
+
+        <TextView
+            android:id="@+id/textview_Saturday"
+            style="@style/days_of_week"
+
+            android:text="@string/Saturday" />
+
+        <TextView
+            android:id="@+id/textview_Sunday"
+            style="@style/days_of_week"
+            android:text="@string/Sunday" />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/button_test_sound"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:paddingTop="10dp"
         android:src="@drawable/test_audio" />
 
-</LinearLayout>
+</RelativeLayout>

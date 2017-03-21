@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.content.CursorLoader;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.AlarmClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
@@ -19,6 +22,8 @@ import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
 public class AlarmClockActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>{
+
+
 
     private static final String LOG_TAG = AlarmClock.class.getSimpleName();
     private static final int URL_LOADER_ID = 1;
@@ -35,10 +40,9 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
         lvAlarms.setEmptyView(findViewById(R.id.empty_list));
         mAlarmCursorAdapter = new AlarmCursorAdapter(this, null);
         lvAlarms.setAdapter(mAlarmCursorAdapter);
-
         getLoaderManager().initLoader(URL_LOADER_ID, null, this);
-
     }
+
 
     /*Pressing the FAB sends user to the voice recorder activity to create a new alarm*/
     private void setupFAB() {
