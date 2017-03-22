@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
+import static android.view.View.GONE;
 import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
 
 
@@ -68,8 +69,6 @@ public class AlarmCursorAdapter extends CursorAdapter{
         TextView minutes = (TextView) view.findViewById(R.id.textview_alarm_minute);
         CheckBox alarmIsSet = (CheckBox) view.findViewById(R.id.checkbox_on_off);
 
-
-
         //Get the column index for each item
         int idColumnIndex = cursor.getColumnIndex(AlarmEntry._ID);
         int descriptionColumnIndex = cursor.getColumnIndex(AlarmEntry.USER_DESCRIPTION);
@@ -97,7 +96,6 @@ public class AlarmCursorAdapter extends CursorAdapter{
 
         ImageButton testSound = (ImageButton) view.findViewById(R.id.button_test_sound);
         testSound.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view)throws
             IllegalArgumentException,
@@ -107,25 +105,15 @@ public class AlarmCursorAdapter extends CursorAdapter{
                     Log.e(LOG_TAG, "File name is null " + fileName);
                 mediaPlayer = new MediaPlayer();
                 try{
-
                     mediaPlayer.setDataSource(fileName);
                     mediaPlayer.prepare();
-
                 }catch (IOException e){
                     e.printStackTrace();
                 }
                 mediaPlayer.start();
-
             }
         });
-
-
-
     }
-
-
-
-
     private int[] StringToIntArray(String daysString) {
         int[] numbersArray = new int[7];
         String[] parts = daysString.split(",");
@@ -152,31 +140,31 @@ public class AlarmCursorAdapter extends CursorAdapter{
         if(day[0] == 1)
             mon.setVisibility(View.VISIBLE) ;
         else
-            mon.setVisibility(view.GONE);
+            mon.setVisibility(GONE);
         if(day[1] == 1)
             tue.setVisibility(View.VISIBLE) ;
         else
-            tue.setVisibility(view.GONE);
+            tue.setVisibility(GONE);
         if(day[2] == 1)
             wed.setVisibility(View.VISIBLE) ;
         else
-            wed.setVisibility(view.GONE);
+            wed.setVisibility(GONE);
         if(day[3] == 1)
             thu.setVisibility(View.VISIBLE) ;
         else
-            thu.setVisibility(view.GONE);
+            thu.setVisibility(GONE);
         if(day[4] == 1)
             fri.setVisibility(View.VISIBLE) ;
         else
-            fri.setVisibility(view.GONE);
+            fri.setVisibility(GONE);
         if(day[5] == 1)
             sat.setVisibility(View.VISIBLE) ;
         else
-            sat.setVisibility(view.GONE);
+            sat.setVisibility(GONE);
         if(day[6] == 1)
             sun.setVisibility(View.VISIBLE) ;
         else
-            sun.setVisibility(view.GONE);
+            sun.setVisibility(GONE);
     }
     //Relase Media Player
     private void relaseMediaPlayer(){
@@ -184,7 +172,5 @@ public class AlarmCursorAdapter extends CursorAdapter{
             mediaPlayer.release();
             mediaPlayer = null;
         }
-
     }
-
 }
