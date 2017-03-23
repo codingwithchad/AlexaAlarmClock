@@ -5,11 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.h.chad.alexaalarmclock.AlarmClockActivity">
+    tools:context="com.h.chad.alexaalarmclock.AlarmClockActivity"
+    >
     <ListView
         android:id="@+id/alarm_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
+       />
     <!-- Empty Alarm Instructions -->
     <RelativeLayout
         android:layout_width="wrap_content"

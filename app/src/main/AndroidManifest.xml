@@ -30,10 +30,13 @@
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
         </activity>
+
         <provider
             android:authorities="com.h.chad.alexaalarmclock"
             android:name=".data.AlarmProvider"
             android:exported="false"/>
+
+        <receiver android:name=".AlarmReceiver"></receiver>
     </application>
 
 </manifest>

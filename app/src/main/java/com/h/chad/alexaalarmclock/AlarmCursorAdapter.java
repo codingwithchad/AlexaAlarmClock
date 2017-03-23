@@ -1,10 +1,14 @@
 package com.h.chad.alexaalarmclock;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Calendar;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -17,9 +21,11 @@ import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
+import static android.content.Context.ALARM_SERVICE;
 import static android.view.View.GONE;
 import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
 
@@ -29,6 +35,9 @@ import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
  */
 
 public class AlarmCursorAdapter extends CursorAdapter{
+
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
 
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
@@ -69,6 +78,14 @@ public class AlarmCursorAdapter extends CursorAdapter{
         TextView minutes = (TextView) view.findViewById(R.id.textview_alarm_minute);
         CheckBox alarmIsSet = (CheckBox) view.findViewById(R.id.checkbox_on_off);
 
+        /*
+        * Setting the alarm for each list item
+        * */
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+
         //Get the column index for each item
         int idColumnIndex = cursor.getColumnIndex(AlarmEntry._ID);
         int descriptionColumnIndex = cursor.getColumnIndex(AlarmEntry.USER_DESCRIPTION);
@@ -101,6 +118,9 @@ public class AlarmCursorAdapter extends CursorAdapter{
             IllegalArgumentException,
             SecurityException,
             IllegalStateException{
+
+                //MediaPlayerFragment.playRecording(context, fileName);
+
                 if(fileName == null)
                     Log.e(LOG_TAG, "File name is null " + fileName);
                 mediaPlayer = new MediaPlayer();
@@ -111,8 +131,20 @@ public class AlarmCursorAdapter extends CursorAdapter{
                     e.printStackTrace();
                 }
                 mediaPlayer.start();
+
             }
         });
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+
+        calendar.set(Calendar.MINUTE, 10);
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                0, alarmIntent);
+        Log.i(LOG_TAG, "Alarm is set for " + 12 + ":" + 10);
+
     }
     private int[] StringToIntArray(String daysString) {
         int[] numbersArray = new int[7];
