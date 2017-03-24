@@ -78,14 +78,6 @@ public class AlarmCursorAdapter extends CursorAdapter{
         TextView minutes = (TextView) view.findViewById(R.id.textview_alarm_minute);
         CheckBox alarmIsSet = (CheckBox) view.findViewById(R.id.checkbox_on_off);
 
-        /*
-        * Setting the alarm for each list item
-        * */
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-
         //Get the column index for each item
         int idColumnIndex = cursor.getColumnIndex(AlarmEntry._ID);
         int descriptionColumnIndex = cursor.getColumnIndex(AlarmEntry.USER_DESCRIPTION);
@@ -101,14 +93,15 @@ public class AlarmCursorAdapter extends CursorAdapter{
         final int alarmHour = cursor.getInt(hourColumnIndex);
         final int alarmMinutes = cursor.getInt(minuteColumnIndex);
         final String fileName = cursor.getString(filenameColumnIndex);
+        final int requestCode = cursor.getInt(idColumnIndex);
 
         alarmIsSet.setText(alarmDescrtipion);
         alarmIsSet.setChecked( (active == 1) );
-        hours.setText(timeFormatter(alarmHour));
-        minutes.setText(timeFormatter(alarmMinutes));
+        hours.setText(AlarmUtils.timeFormatter(alarmHour));
+        minutes.setText(AlarmUtils.timeFormatter(alarmMinutes));
 
         String daysString = cursor.getString(daysColumnIndex);
-        int[] daysArray = StringToIntArray(daysString);
+        int[] daysArray = AlarmUtils.StringToIntArray(daysString);
         daysOfWeekVisible(daysArray, view);
 
         ImageButton testSound = (ImageButton) view.findViewById(R.id.button_test_sound);
@@ -118,9 +111,6 @@ public class AlarmCursorAdapter extends CursorAdapter{
             IllegalArgumentException,
             SecurityException,
             IllegalStateException{
-
-                //MediaPlayerFragment.playRecording(context, fileName);
-
                 if(fileName == null)
                     Log.e(LOG_TAG, "File name is null " + fileName);
                 mediaPlayer = new MediaPlayer();
@@ -135,18 +125,28 @@ public class AlarmCursorAdapter extends CursorAdapter{
             }
         });
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        /*
+        * Setting the alarm for each list item
+        * */
+        if (alarmIsSet.isChecked()) {
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            intent.putExtra("extraString", fileName);
+            alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);
 
-        calendar.set(Calendar.MINUTE, 10);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, alarmHour);
+            calendar.set(Calendar.MINUTE, alarmMinutes);
 
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                0, alarmIntent);
-        Log.i(LOG_TAG, "Alarm is set for " + 12 + ":" + 10);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    0, alarmIntent);
+            Log.i(LOG_TAG, "Alarm is set for " + alarmHour + ":" + alarmMinutes);
+        }
 
     }
-    private int[] StringToIntArray(String daysString) {
+    /*
+    public static int[] StringToIntArray(String daysString) {
         int[] numbersArray = new int[7];
         String[] parts = daysString.split(",");
         for(int i = 0; i < parts.length; i++){
@@ -155,11 +155,13 @@ public class AlarmCursorAdapter extends CursorAdapter{
         }
         return numbersArray;
     }
-
+    */
+    /*
     private String timeFormatter(int unformatted){
         DecimalFormat formatTime = new DecimalFormat("00");
         return formatTime.format(unformatted);
     }
+    */
     //Broke out the days of the week into its own method
     private void daysOfWeekVisible(int[] day, View view) {
         TextView mon = (TextView) view.findViewById(R.id.textview_Monday);

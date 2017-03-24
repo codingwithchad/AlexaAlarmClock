@@ -80,13 +80,13 @@ public class AlarmProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                break;
             default:
                 throw new IllegalArgumentException(LOG_TAG + " can't query URI: " + uri);
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
-
 
     @Override
     public String getType(Uri uri) {

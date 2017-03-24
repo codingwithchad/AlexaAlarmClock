@@ -1,27 +1,23 @@
 package com.h.chad.alexaalarmclock;
 
-
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
-
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.os.Environment;
 import android.os.SystemClock;
-import android.speech.tts.Voice;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.Time;
@@ -50,17 +46,15 @@ import java.util.TimeZone;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.R.attr.path;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-import static android.media.CamcorderProfile.get;
 
 /**
  * Created by Chad H. Glaser on 3/14/2017.
  *
  */
 
-public class VoiceRecorderActivity extends AppCompatActivity{
-
+public class VoiceRecorderActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor>{
+    
     private MediaRecorder voiceRecorder;
     private MediaPlayer testRecording;
     private Button startRecording;
@@ -89,15 +83,26 @@ public class VoiceRecorderActivity extends AppCompatActivity{
 
     public final static String LOG_TAG = VoiceRecorderActivity.class.getSimpleName();
     public final static int REQUEST_PERMISSION_CODE = 1;
+    private static final int EXISTING_ALARM_LOADER = 0;
     private boolean recordingInProgress = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice_recorder);
-
+        
+        Intent receivedIntent = getIntent();        //Receive the intent from the AlarmClockActivity
+        mCurrentAlarmUri = receivedIntent.getData();    //If there 
+        
         linkVariables();            //Get all the member variables set attached from the view
+        
+        if(mCurrentAlarmUri == null){
+            setTitle("Record a new alarm");
+        }else{
+            setTitle("Edit Alarm" );
+            getLoaderManager().initLoader(EXISTING_ALARM_LOADER, null, this);
+        }
+        
         setCurrentTime();           //Set the clock to the current time
         buttonRecordingPressed();   //When the recording button is pressed
         playRecording();            //When the playback button is pressed
@@ -124,8 +129,8 @@ public class VoiceRecorderActivity extends AppCompatActivity{
 
     private void setCurrentTime() {
         Calendar c = Calendar.getInstance();
-        mHours.setText(Integer.toString(c.get(Calendar.HOUR_OF_DAY)));
-        mMinutes.setText(Integer.toString(c.get(Calendar.MINUTE)));
+        mHours.setText(AlarmUtils.timeFormatter(c.get(Calendar.HOUR_OF_DAY)));
+        mMinutes.setText(AlarmUtils.timeFormatter(c.get(Calendar.MINUTE)));
     }
 
     private void buttonRecordingPressed() {
@@ -203,9 +208,6 @@ public class VoiceRecorderActivity extends AppCompatActivity{
             }
         });
     }
-
-
-
     private void requestPermission() {
         ActivityCompat.requestPermissions(VoiceRecorderActivity.this, new
                 String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, REQUEST_PERMISSION_CODE);
@@ -230,7 +232,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
-                break;
+            break;
         }
     }
 
@@ -282,8 +284,6 @@ public class VoiceRecorderActivity extends AppCompatActivity{
         });
     }
     private void saveButtonClicked() {
-
-
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -357,7 +357,7 @@ public class VoiceRecorderActivity extends AppCompatActivity{
         days[6] = (sun.isChecked()) ? 1 : 0;
         return days;
     }
-/*
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String projection[] = {
@@ -369,14 +369,18 @@ public class VoiceRecorderActivity extends AppCompatActivity{
                 AlarmEntry.ALARM_MINUTE,
                 AlarmEntry.ALARM_DAYS
         };
-        return new CursorLoader(this, mCurrentAlarmUri, projection, null, null, null);
+        return new CursorLoader(
+                this,
+                mCurrentAlarmUri, 
+                projection, 
+                null, 
+                null, 
+                null);
     }
-
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data){
         if(data == null || data.getCount() < 1){return;}
         if(data.moveToFirst()){
-
             int user_descriptionColumnIndex = data.getColumnIndex(AlarmEntry.USER_DESCRIPTION);
             int file_nameColumnIndex = data.getColumnIndex(AlarmEntry.FILE_NAME);
             int alarm_activeColumnIndex = data.getColumnIndex(AlarmEntry.ALARM_ACTIVE);
@@ -391,12 +395,25 @@ public class VoiceRecorderActivity extends AppCompatActivity{
             int alarmMinute = data.getInt(alarm_minuteColumnIndex);
             String alarmDaysOfWeek = data.getString(days_of_weekColumnIndex);
 
+             mRecordingName.setText(user_Description);
+            mHours.setText(AlarmUtils.timeFormatter(alarmHour));
+            mMinutes.setText(AlarmUtils.timeFormatter(alarmMinute));
+
+            int[] days = AlarmUtils.StringToIntArray(alarmDaysOfWeek);
+            mon.setChecked(days[0] == 1);
+            tue.setChecked(days[1] == 1);
+            wed.setChecked(days[2] == 1);
+            thu.setChecked(days[3] == 1);
+            fri.setChecked(days[4] == 1);
+            sat.setChecked(days[5] == 1);
+            sun.setChecked(days[6] == 1);
+
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        recordingName.setText("");
+    public void onLoaderReset(Loader<Cursor> loader){
+        mRecordingName.setText("");
         mHours.setText("");
         mMinutes.setText("");
         mon.setChecked(false);
@@ -407,5 +424,5 @@ public class VoiceRecorderActivity extends AppCompatActivity{
         sat.setChecked(false);
         sun.setChecked(false);
 
-    }*/
+    }
 }

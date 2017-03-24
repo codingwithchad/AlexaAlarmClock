@@ -24,8 +24,6 @@ import android.widget.ListView;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
-
-
 public class AlarmClockActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>{
 
