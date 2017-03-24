@@ -1,12 +1,14 @@
 package com.h.chad.alexaalarmclock;
 
+import android.app.Application;
+
 import java.text.DecimalFormat;
 
 /**
  * Created by chad on 3/24/2017.
  */
 
-public class AlarmUtils {
+public class AlarmUtils{
 
 
     public static int[] StringToIntArray(String daysString) {

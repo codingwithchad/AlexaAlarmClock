@@ -26,6 +26,8 @@
     <string name="success_inserting">Success inserting the new alarm</string>
     <string name="fail_updating">Failed to updating the alarm</string>
     <string name="success_updating">Success updating the alarm</string>
+    <string name="error_deleting_alarm">Error Deleting Alarm</string>
+    <string name="alarm_deleted">Alarm Deleted</string>
 
     <string name="options_menu_delete">Delete</string>
 </resources>

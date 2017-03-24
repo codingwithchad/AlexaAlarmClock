@@ -12,6 +12,7 @@ import java.util.Calendar;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.provider.AlarmClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -129,6 +130,7 @@ public class AlarmCursorAdapter extends CursorAdapter{
         * Setting the alarm for each list item
         * */
         if (alarmIsSet.isChecked()) {
+
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("extraString", fileName);
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -139,8 +141,11 @@ public class AlarmCursorAdapter extends CursorAdapter{
             calendar.set(Calendar.HOUR_OF_DAY, alarmHour);
             calendar.set(Calendar.MINUTE, alarmMinutes);
 
+
+
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     0, alarmIntent);
+
             Log.i(LOG_TAG, "Alarm is set for " + alarmHour + ":" + alarmMinutes);
         }
 

@@ -22,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -46,6 +48,7 @@ import java.util.TimeZone;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.media.CamcorderProfile.get;
 
 /**
  * Created by Chad H. Glaser on 3/14/2017.
@@ -283,6 +286,42 @@ public class VoiceRecorderActivity extends AppCompatActivity
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.voice_recorder_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.deleteButton:
+                delete();
+                break;
+        }
+        return true;
+    }
+
+    private void delete() {
+        if(mCurrentAlarmUri != null){
+            int rows_deleted = getContentResolver().delete(mCurrentAlarmUri, null, null);
+            int len = Toast.LENGTH_SHORT;
+            Context c = getApplicationContext();
+            if(rows_deleted == 0){
+                Toast.makeText(c, getText(R.string.error_deleting_alarm), len).show();
+            }else{
+                Toast.makeText(c, getText(R.string.alarm_deleted), len).show();
+            }
+        }
+        finish();
+    }
+
     private void saveButtonClicked() {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override

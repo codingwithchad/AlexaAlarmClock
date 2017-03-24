@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,7 +19,8 @@ import java.io.IOException;
 
 public class AlarmReceiver extends BroadcastReceiver{
     public final static String LOG_TAG = AlarmReceiver.class.getSimpleName();
-    public MediaPlayer mediaPlayer;
+    //public MediaPlayer mediaPlayer;
+    public Uri notification;
     @Override
     public void onReceive(Context context, Intent intent) {
         String fileName = intent.getStringExtra("extraString");
@@ -25,14 +29,21 @@ public class AlarmReceiver extends BroadcastReceiver{
 
         if(fileName == null)
             Log.e(LOG_TAG, "File name is null " + fileName);
-        mediaPlayer = new MediaPlayer();
+        //mediaPlayer = new MediaPlayer();
+        notification = Uri.parse("content://" +fileName);
+
+
         try{
-            mediaPlayer.setDataSource(fileName);
-            mediaPlayer.prepare();
-        }catch (IOException e){
+            RingtoneManager.setActualDefaultRingtoneUri(
+                    context, RingtoneManager.TYPE_ALARM, notification);
+            Ringtone r = RingtoneManager.getRingtone(context, notification);
+            r.play();
+            //mediaPlayer.setDataSource(fileName);
+            //mediaPlayer.prepare();
+        }catch (Exception e){
             e.printStackTrace();
         }
-        mediaPlayer.start();
+        //mediaPlayer.start();
 
     }
 }
