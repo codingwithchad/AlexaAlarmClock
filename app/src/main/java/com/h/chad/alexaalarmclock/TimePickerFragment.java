@@ -38,7 +38,7 @@ public class TimePickerFragment extends DialogFragment
     public void onTimeSet(TimePicker timePicker, int hour, int min) {
         mTvHours = (TextView) getActivity().findViewById(R.id.tv_hours);
         mTvMinutes = (TextView)getActivity().findViewById(R.id.tv_minutes);
-        mTvHours.setText(String.valueOf(hour));
-        mTvMinutes.setText(String.valueOf(min));
+        mTvHours.setText(AlarmUtils.timeFormatter(hour));
+        mTvMinutes.setText(AlarmUtils.timeFormatter(min));
     }
 }

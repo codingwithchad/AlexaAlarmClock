@@ -30,7 +30,6 @@ import static android.content.Context.ALARM_SERVICE;
 import static android.view.View.GONE;
 import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
 
-
 /**
  * Created by chad on 3/15/2017.
  */
@@ -39,6 +38,7 @@ public class AlarmCursorAdapter extends CursorAdapter{
 
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
+    public Calendar mCalendar = Calendar.getInstance();
 
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
@@ -63,7 +63,6 @@ public class AlarmCursorAdapter extends CursorAdapter{
                     relaseMediaPlayer();
                 }
             };
-
 
     public AlarmCursorAdapter(Context context, Cursor cursor){
         super(context, cursor, 0);
@@ -129,44 +128,34 @@ public class AlarmCursorAdapter extends CursorAdapter{
         /*
         * Setting the alarm for each list item
         * */
-        if (alarmIsSet.isChecked()) {
+
+        if (alarmIsSet.isChecked()){
+
+            //Check if the alarm is in the future
+            mCalendar.setTimeInMillis(System.currentTimeMillis());
+            Calendar currrentTime = Calendar.getInstance();
+            currrentTime.setTimeInMillis(System.currentTimeMillis());
 
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("extraString", fileName);
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, alarmHour);
-            calendar.set(Calendar.MINUTE, alarmMinutes);
 
 
+            mCalendar.set(Calendar.HOUR_OF_DAY, alarmHour);
+            mCalendar.set(Calendar.MINUTE, alarmMinutes);
+            if (mCalendar.after(currrentTime)) {
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
+                        0, alarmIntent);
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    0, alarmIntent);
-
-            Log.i(LOG_TAG, "Alarm is set for " + alarmHour + ":" + alarmMinutes);
+                Log.i(LOG_TAG, "Alarm is set for " + alarmHour + ":" + alarmMinutes);
+            }else{
+                Log.i(LOG_TAG, "Alarm is in the future, No Alarm set ");
+            }
         }
+    }
 
-    }
-    /*
-    public static int[] StringToIntArray(String daysString) {
-        int[] numbersArray = new int[7];
-        String[] parts = daysString.split(",");
-        for(int i = 0; i < parts.length; i++){
-            String cleaned = parts[i].replaceAll("[^\\d.]", "");
-           numbersArray[i] = Integer.valueOf(cleaned);
-        }
-        return numbersArray;
-    }
-    */
-    /*
-    private String timeFormatter(int unformatted){
-        DecimalFormat formatTime = new DecimalFormat("00");
-        return formatTime.format(unformatted);
-    }
-    */
     //Broke out the days of the week into its own method
     private void daysOfWeekVisible(int[] day, View view) {
         TextView mon = (TextView) view.findViewById(R.id.textview_Monday);

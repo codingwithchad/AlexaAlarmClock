@@ -3,6 +3,7 @@ package com.h.chad.alexaalarmclock;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -19,8 +20,8 @@ import java.io.IOException;
 
 public class AlarmReceiver extends BroadcastReceiver{
     public final static String LOG_TAG = AlarmReceiver.class.getSimpleName();
-    //public MediaPlayer mediaPlayer;
-    public Uri notification;
+    public MediaPlayer mediaPlayer;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String fileName = intent.getStringExtra("extraString");
@@ -29,21 +30,18 @@ public class AlarmReceiver extends BroadcastReceiver{
 
         if(fileName == null)
             Log.e(LOG_TAG, "File name is null " + fileName);
-        //mediaPlayer = new MediaPlayer();
-        notification = Uri.parse("content://" +fileName);
+        mediaPlayer = new MediaPlayer();
+
 
 
         try{
-            RingtoneManager.setActualDefaultRingtoneUri(
-                    context, RingtoneManager.TYPE_ALARM, notification);
-            Ringtone r = RingtoneManager.getRingtone(context, notification);
-            r.play();
-            //mediaPlayer.setDataSource(fileName);
-            //mediaPlayer.prepare();
-        }catch (Exception e){
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+            mediaPlayer.setDataSource(fileName);
+            mediaPlayer.prepare();
+        }catch (IOException e){
             e.printStackTrace();
         }
-        //mediaPlayer.start();
+        mediaPlayer.start();
 
     }
 }
