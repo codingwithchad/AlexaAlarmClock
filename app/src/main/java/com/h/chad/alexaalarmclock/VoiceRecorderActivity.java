@@ -62,7 +62,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
     private MediaPlayer testRecording;
     private Button startRecording;
     private Button playBack;
-    private String fileSavePath = null;
+    private String mFileSavePath = null;
 
     private Chronometer recordingLength;
 
@@ -154,13 +154,14 @@ public class VoiceRecorderActivity extends AppCompatActivity
                             recordingLength.setBase(SystemClock.elapsedRealtime());
                             recordingLength.start();
                         }
-
-                        fileSavePath =
-                                Environment.getExternalStorageDirectory().getAbsolutePath() +
-                                        "/" + timeforfile() + nameForFile + ".m4a";
+                        if(mFileSavePath == null) {
+                            mFileSavePath =
+                                    Environment.getExternalStorageDirectory().getAbsolutePath() +
+                                            "/" + timeforfile() + nameForFile + ".m4a";
+                        }
                         ///storage/emulated/0/15_27_05_18_03_2017ggh.m4a is the file save path
                         //Keeping log message here to track file sizes later.
-                        Log.e("***** " +LOG_TAG, "FileSavePath: " +fileSavePath + "***** ");
+                        Log.e("***** " +LOG_TAG, "FileSavePath: " +mFileSavePath + "***** ");
                         mediaRecorder();
 
                         try {
@@ -200,7 +201,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
                     IllegalStateException {
                 testRecording = new MediaPlayer();
                 try {
-                    testRecording.setDataSource(fileSavePath);
+                    testRecording.setDataSource(mFileSavePath);
                     testRecording.prepare();
 
                 } catch (IOException e) {
@@ -260,7 +261,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
         voiceRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         voiceRecorder.setAudioSamplingRate(44100);
         voiceRecorder.setAudioEncodingBitRate(96000);
-        voiceRecorder.setOutputFile(fileSavePath);
+        voiceRecorder.setOutputFile(mFileSavePath);
     }
 
     //Takes no input
@@ -337,7 +338,8 @@ public class VoiceRecorderActivity extends AppCompatActivity
                 }else{
                     values.put(AlarmEntry.USER_DESCRIPTION, user_description);
                 }
-                String fileNameForDb = fileSavePath;
+
+                String fileNameForDb = mFileSavePath;
                 if(TextUtils.isEmpty(fileNameForDb) || fileNameForDb.length() <= 0){
                     Toast.makeText(c, getText(R.string.needfilesavepath), duration).show();
                     return;
@@ -428,13 +430,13 @@ public class VoiceRecorderActivity extends AppCompatActivity
             int days_of_weekColumnIndex = data.getColumnIndex(AlarmEntry.ALARM_DAYS);
 
             String user_Description = data.getString(user_descriptionColumnIndex);
-            String fileName = data.getString(file_nameColumnIndex);
+            mFileSavePath = data.getString(file_nameColumnIndex);
             int isAlarmActive = data.getInt(alarm_activeColumnIndex);
             int alarmHour = data.getInt(alarm_hourColumnIndex);
             int alarmMinute = data.getInt(alarm_minuteColumnIndex);
             String alarmDaysOfWeek = data.getString(days_of_weekColumnIndex);
 
-             mRecordingName.setText(user_Description);
+            mRecordingName.setText(user_Description);
             mHours.setText(AlarmUtils.timeFormatter(alarmHour));
             mMinutes.setText(AlarmUtils.timeFormatter(alarmMinute));
 
@@ -446,7 +448,6 @@ public class VoiceRecorderActivity extends AppCompatActivity
             fri.setChecked(days[4] == 1);
             sat.setChecked(days[5] == 1);
             sun.setChecked(days[6] == 1);
-
         }
     }
 
@@ -462,6 +463,5 @@ public class VoiceRecorderActivity extends AppCompatActivity
         fri.setChecked(false);
         sat.setChecked(false);
         sun.setChecked(false);
-
     }
 }

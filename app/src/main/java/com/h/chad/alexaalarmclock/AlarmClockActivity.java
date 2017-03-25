@@ -32,7 +32,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
     private AlarmCursorAdapter mAlarmCursorAdapter;
     FloatingActionButton fab;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +68,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
                 startActivity(toRecorderIntent);
             }
         });
-
     }
-
-
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -105,6 +100,4 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
     public void onLoaderReset(Loader<Cursor> loader) {
         mAlarmCursorAdapter.swapCursor(null);
     }
-
-
 }
