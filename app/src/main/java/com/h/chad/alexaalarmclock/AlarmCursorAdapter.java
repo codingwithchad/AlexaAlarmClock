@@ -41,6 +41,16 @@ public class AlarmCursorAdapter extends CursorAdapter{
     public Calendar mCalendar = Calendar.getInstance();
 
     private MediaPlayer mediaPlayer;
+
+    //Days of week per Android Calendar
+    //https://developer.android.com/reference/java/util/Calendar.html
+    private final static int SUNDAY    = 1;
+    private final static int MONDAY    = 2;
+    private final static int TUESDAY   = 3;
+    private final static int WEDNESDAY = 4;
+    private final static int THURSDAY  = 5;
+    private final static int FRIDAY    = 6;
+    private final static int SATURDAY  = 7;
     private AudioManager audioManager;
     AudioManager.OnAudioFocusChangeListener afcl =
             new AudioManager.OnAudioFocusChangeListener(){
@@ -96,7 +106,7 @@ public class AlarmCursorAdapter extends CursorAdapter{
         final int requestCode = cursor.getInt(idColumnIndex);
 
         alarmIsSet.setText(alarmDescrtipion);
-        alarmIsSet.setChecked( (active == 1) );
+        alarmIsSet.setChecked((active == 1));
         hours.setText(AlarmUtils.timeFormatter(alarmHour));
         minutes.setText(AlarmUtils.timeFormatter(alarmMinutes));
 
@@ -107,17 +117,17 @@ public class AlarmCursorAdapter extends CursorAdapter{
         ImageButton testSound = (ImageButton) view.findViewById(R.id.button_test_sound);
         testSound.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)throws
-            IllegalArgumentException,
-            SecurityException,
-            IllegalStateException{
-                if(fileName == null)
+            public void onClick(View view) throws
+                    IllegalArgumentException,
+                    SecurityException,
+                    IllegalStateException {
+                if (fileName == null)
                     Log.e(LOG_TAG, "File name is null " + fileName);
                 mediaPlayer = new MediaPlayer();
-                try{
+                try {
                     mediaPlayer.setDataSource(fileName);
                     mediaPlayer.prepare();
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 mediaPlayer.start();
@@ -128,31 +138,56 @@ public class AlarmCursorAdapter extends CursorAdapter{
         /*
         * Setting the alarm for each list item
         * */
-
-        if (alarmIsSet.isChecked()){
-
-            //Check if the alarm is in the future
-            mCalendar.setTimeInMillis(System.currentTimeMillis());
-            Calendar currrentTime = Calendar.getInstance();
-            currrentTime.setTimeInMillis(System.currentTimeMillis());
-
+        if (alarmIsSet.isChecked()) {
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("extraString", fileName);
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);
-
-
-
-            mCalendar.set(Calendar.HOUR_OF_DAY, alarmHour);
-            mCalendar.set(Calendar.MINUTE, alarmMinutes);
-            if (mCalendar.after(currrentTime)) {
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
-                        0, alarmIntent);
-
-                Log.i(LOG_TAG, "Alarm is set for " + alarmHour + ":" + alarmMinutes);
-            }else{
-                Log.i(LOG_TAG, "Alarm is in the future, No Alarm set ");
+            alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            if(daysArray[0] == 1) {
+                setSingleAlarm(alarmHour, alarmMinutes, SUNDAY);
+            }else if (daysArray[1] == 1){
+                setSingleAlarm(alarmHour, alarmMinutes, MONDAY);
+            }else if (daysArray[1] == 1){
+                setSingleAlarm(alarmHour, alarmMinutes, TUESDAY);
+            }else if (daysArray[1] == 1){
+                setSingleAlarm(alarmHour, alarmMinutes, WEDNESDAY);
+            }else if (daysArray[1] == 1){
+                setSingleAlarm(alarmHour, alarmMinutes, THURSDAY);
+            }else if (daysArray[1] == 1){
+                setSingleAlarm(alarmHour, alarmMinutes, FRIDAY);
+            }else if (daysArray[1] == 1){
+                setSingleAlarm(alarmHour, alarmMinutes, SATURDAY);
             }
+        }
+    }
+
+    private void setSingleAlarm(int hours, int minutess, int day_of_week) {
+        //Check if the alarm is in the future
+        mCalendar.setTimeInMillis(System.currentTimeMillis());
+        Calendar currrentTime = Calendar.getInstance();
+        currrentTime.setTimeInMillis(System.currentTimeMillis());
+
+        mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
+        mCalendar.set(Calendar.HOUR_OF_DAY, hours);
+        mCalendar.set(Calendar.MINUTE, minutess);
+        mCalendar.set(Calendar.SECOND, 0);
+        if (mCalendar.after(currrentTime)) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
+                    0, alarmIntent);
+
+            Log.i(LOG_TAG, "Alarm is set for " + hours + ":" + minutess + "Day: " + day_of_week);
+        }
+
+        else {
+            cancelAlarm();
+            Log.i(LOG_TAG, "Alarm is in the future, No Alarm set ");
+        }
+    }
+
+
+    private void cancelAlarm() {
+        if (alarmManager != null) {
+            alarmManager.cancel(alarmIntent);
         }
     }
 

@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -38,6 +41,7 @@ import android.widget.Toast;
 import com.h.chad.alexaalarmclock.data.AlarmContract;
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -48,7 +52,10 @@ import java.util.TimeZone;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.R.attr.path;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.media.CamcorderProfile.get;
+import static android.provider.Telephony.Mms.Part.FILENAME;
 
 /**
  * Created by Chad H. Glaser on 3/14/2017.
@@ -71,6 +78,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
     protected int mHoursForDB;
     protected int mMinutesForDB;
     private Button mSaveButton;
+    private Button mCancelButton;
     private Uri mCurrentAlarmUri;
 
     private EditText mRecordingName;
@@ -87,11 +95,15 @@ public class VoiceRecorderActivity extends AppCompatActivity
     public final static String LOG_TAG = VoiceRecorderActivity.class.getSimpleName();
     public final static int REQUEST_PERMISSION_CODE = 1;
     private static final int EXISTING_ALARM_LOADER = 0;
+    private static final String FILE_SAVE_PATH_STRING = "fileSavePathKey";
     private boolean recordingInProgress = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mFileSavePath = savedInstanceState.getString(FILE_SAVE_PATH_STRING);
+        }
         setContentView(R.layout.activity_voice_recorder);
         
         Intent receivedIntent = getIntent();        //Receive the intent from the AlarmClockActivity
@@ -111,6 +123,23 @@ public class VoiceRecorderActivity extends AppCompatActivity
         playRecording();            //When the playback button is pressed
         timeClicked();              //When time is clicked, opens TimePickerFragment
         saveButtonClicked();        //When save is pressed
+        canelButtonClicked();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putString(FILE_SAVE_PATH_STRING, mFileSavePath);
+
+    }
+
+    private void canelButtonClicked() {
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private void linkVariables() {
@@ -121,6 +150,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
         mMinutes = (TextView)findViewById(R.id.tv_minutes);
         mHours = (TextView) findViewById(R.id.tv_hours);
         mSaveButton = (Button) findViewById(R.id.button_save);
+        mCancelButton = (Button) findViewById(R.id.button_cancel);
         mon = (CheckBox) findViewById(R.id.cb_monday);
         tue = (CheckBox) findViewById(R.id.cb_tuesday);
         wed = (CheckBox) findViewById(R.id.cb_wednesday);
@@ -155,9 +185,9 @@ public class VoiceRecorderActivity extends AppCompatActivity
                             recordingLength.start();
                         }
                         if(mFileSavePath == null) {
-                            mFileSavePath =
-                                    Environment.getExternalStorageDirectory().getAbsolutePath() +
-                                            "/" + timeforfile() + nameForFile + ".m4a";
+
+
+                            mFileSavePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + timeforfile() + nameForFile + ".m4a";
                         }
                         ///storage/emulated/0/15_27_05_18_03_2017ggh.m4a is the file save path
                         //Keeping log message here to track file sizes later.
@@ -212,6 +242,8 @@ public class VoiceRecorderActivity extends AppCompatActivity
             }
         });
     }
+
+
     private void requestPermission() {
         ActivityCompat.requestPermissions(VoiceRecorderActivity.this, new
                 String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, REQUEST_PERMISSION_CODE);
@@ -310,6 +342,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
     }
 
     private void delete() {
+
         if(mCurrentAlarmUri != null){
             int rows_deleted = getContentResolver().delete(mCurrentAlarmUri, null, null);
             int len = Toast.LENGTH_SHORT;
@@ -317,10 +350,22 @@ public class VoiceRecorderActivity extends AppCompatActivity
             if(rows_deleted == 0){
                 Toast.makeText(c, getText(R.string.error_deleting_alarm), len).show();
             }else{
+                if (mFileSavePath != null) {
+                    goDeleteTheFile();
+                }
                 Toast.makeText(c, getText(R.string.alarm_deleted), len).show();
             }
         }
         finish();
+    }
+
+    private void goDeleteTheFile() {
+        if (mFileSavePath != null) {
+            String path = mFileSavePath;
+            String file = path.substring(path.lastIndexOf(File.separator) + 1);
+            new File(mFileSavePath).delete();
+            Log.e(LOG_TAG, "File name is:" + file);
+        }
     }
 
     private void saveButtonClicked() {
@@ -387,6 +432,9 @@ public class VoiceRecorderActivity extends AppCompatActivity
             }
         });
     }
+    //https://developer.android.com/reference/java/util/Calendar.html
+    //Day of week is 1 to 7 and this array is 0 to 6.
+    //Sunday is 1, Monday 2, Tuesday 3, Wedensday 4, Thursday 5, Friday 6, Saturday 7
     public int[] daysOfTheWeek(){
         int[] days = new int[7];
         days[0] = (mon.isChecked()) ? 1 : 0;
@@ -464,4 +512,5 @@ public class VoiceRecorderActivity extends AppCompatActivity
         sat.setChecked(false);
         sun.setChecked(false);
     }
+
 }
