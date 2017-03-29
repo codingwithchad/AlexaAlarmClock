@@ -1,5 +1,7 @@
 package com.h.chad.alexaalarmclock;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -40,6 +42,7 @@ import android.widget.Toast;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract;
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
+import com.h.chad.alexaalarmclock.data.AlarmProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,14 +51,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
-import java.util.TimeZone;
+
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.R.attr.path;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static android.media.CamcorderProfile.get;
-import static android.provider.Telephony.Mms.Part.FILENAME;
+
 
 /**
  * Created by Chad H. Glaser on 3/14/2017.
@@ -73,6 +73,20 @@ public class VoiceRecorderActivity extends AppCompatActivity
 
     private Chronometer recordingLength;
 
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
+    public Calendar mCalendar = Calendar.getInstance();
+
+    //Days of week per Android Calendar
+    //https://developer.android.com/reference/java/util/Calendar.html
+    private final static int SUNDAY    = 1;
+    private final static int MONDAY    = 2;
+    private final static int TUESDAY   = 3;
+    private final static int WEDNESDAY = 4;
+    private final static int THURSDAY  = 5;
+    private final static int FRIDAY    = 6;
+    private final static int SATURDAY  = 7;
+
     private LinearLayout mTime_button;
 
     protected int mHoursForDB;
@@ -81,6 +95,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
     private Button mCancelButton;
     private Uri mCurrentAlarmUri;
 
+    private TextView mAlarmId;
     private EditText mRecordingName;
     private TextView mHours;
     private TextView mMinutes;
@@ -149,6 +164,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
         recordingLength = (Chronometer) findViewById(R.id.record_timer);
         mMinutes = (TextView)findViewById(R.id.tv_minutes);
         mHours = (TextView) findViewById(R.id.tv_hours);
+        mAlarmId = (TextView)findViewById(R.id.tv_alarmID);
         mSaveButton = (Button) findViewById(R.id.button_save);
         mCancelButton = (Button) findViewById(R.id.button_cancel);
         mon = (CheckBox) findViewById(R.id.cb_monday);
@@ -171,7 +187,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (checkPermissions()) {
-                    if (recordingInProgress == false) {
+                    if (!recordingInProgress) {
                         String nameForFile = mRecordingName.getText().toString();
 
                         if (nameForFile.isEmpty() || nameForFile.length() == 0) {
@@ -203,7 +219,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
                             x.printStackTrace();
                         }
 
-                    } else if (recordingInProgress == true) {
+                    } else if (recordingInProgress) {
                         recordingInProgress = false;
                         startRecording.setBackgroundColor(Color.GREEN);
                         startRecording.setText(R.string.record);
@@ -242,7 +258,6 @@ public class VoiceRecorderActivity extends AppCompatActivity
             }
         });
     }
-
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(VoiceRecorderActivity.this, new
@@ -342,7 +357,6 @@ public class VoiceRecorderActivity extends AppCompatActivity
     }
 
     private void delete() {
-
         if(mCurrentAlarmUri != null){
             int rows_deleted = getContentResolver().delete(mCurrentAlarmUri, null, null);
             int len = Toast.LENGTH_SHORT;
@@ -375,6 +389,11 @@ public class VoiceRecorderActivity extends AppCompatActivity
                 ContentValues values = new ContentValues();
                 int duration = Toast.LENGTH_SHORT;
                 Context c = getApplicationContext();
+                boolean isActive = false;
+                boolean success = false;
+                int alarmID = -1;
+                int [] alarmDays = new int[7];
+                alarmDays = daysOfTheWeek();
 
                 String user_description = mRecordingName.getText().toString().trim();
                 if(TextUtils.isEmpty(user_description) || user_description.length() <=0 ){
@@ -392,6 +411,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
                     values.put(AlarmEntry.FILE_NAME, fileNameForDb);
                 }
                 values.put(AlarmEntry.ALARM_ACTIVE, 1);
+
                 mHoursForDB = Integer.parseInt(mHours.getText().toString().trim());
                 if(mHoursForDB < 0 || mHoursForDB > 24){
                     Toast.makeText(c, getText(R.string.houroutofbounds), duration).show();
@@ -404,7 +424,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
                 }else{
                     values.put(AlarmEntry.ALARM_MINUTE, mMinutesForDB);
                 }
-                String daysForDatabase = Arrays.toString(daysOfTheWeek());
+                String daysForDatabase = Arrays.toString(alarmDays);
                 if(TextUtils.isEmpty(daysForDatabase) || daysForDatabase.length() <= 0){
                     Toast.makeText(c, getText(R.string.days_of_week_error), duration).show();
                 }else{
@@ -415,9 +435,12 @@ public class VoiceRecorderActivity extends AppCompatActivity
                 if(mCurrentAlarmUri == null){
                     Uri newUri = getContentResolver().insert(
                             AlarmEntry.CONTENT_URI, values);
+
                     if(newUri == null){
                         Toast.makeText(c, getText(R.string.fail_inserting), duration).show();
                     }else{
+                        success = true;
+                         alarmID = (int) AlarmProvider.mThisIsMyAlarmId;
                         Toast.makeText(c, getText(R.string.success_inserting), duration).show();
                     }
                 }else{
@@ -426,13 +449,24 @@ public class VoiceRecorderActivity extends AppCompatActivity
                     if(rowsAffected == 0){
                         Toast.makeText(c, getText(R.string.fail_updating), duration).show();
                     }else{
+                        success = true;
+                        alarmID = Integer.valueOf(mAlarmId.getText().toString().trim());
+                        Log.i(LOG_TAG, "ALARM ID: " + alarmID);
                         Toast.makeText(c, getText(R.string.success_updating), duration).show();
                     }
                 }
+                //The alarm was successfully added or updates, we should set the alarm
+                if(success && alarmID >= 0 ){
+
+                    setSingleAlarm(true, c, mHoursForDB, mMinutesForDB, alarmDays, alarmID );
+                }
+
             finish();
             }
         });
     }
+
+
     //https://developer.android.com/reference/java/util/Calendar.html
     //Day of week is 1 to 7 and this array is 0 to 6.
     //Sunday is 1, Monday 2, Tuesday 3, Wedensday 4, Thursday 5, Friday 6, Saturday 7
@@ -446,6 +480,71 @@ public class VoiceRecorderActivity extends AppCompatActivity
         days[5] = (sat.isChecked()) ? 1 : 0;
         days[6] = (sun.isChecked()) ? 1 : 0;
         return days;
+    }
+    /*
+        * Setting the alarm on save, for each day of the week
+        * */
+    public void setSingleAlarm(boolean isActive, Context context,
+                               int alarmHour, int alarmMinutes, int[] daysArray,
+                               int alarmID){
+        if (isActive) {
+
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            intent.putExtra("extraString", mFileSavePath);
+            alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            //alarmIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            if(daysArray[0] == 1) {
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+SUNDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, SUNDAY);
+            }
+            if (daysArray[1] == 1){
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+MONDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, MONDAY);
+            }
+            if (daysArray[2] == 1){
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+TUESDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, TUESDAY);
+            }
+            if (daysArray[3] == 1){
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+WEDNESDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, WEDNESDAY);
+            }
+            if (daysArray[4] == 1){
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+THURSDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, THURSDAY);
+            }
+            if (daysArray[5] == 1){
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+FRIDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, FRIDAY);
+            }
+            if (daysArray[6] == 1){
+                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+SATURDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setSingleAlarm(alarmHour, alarmMinutes, SATURDAY);
+            }
+        }
+
+    }
+
+    private void setSingleAlarm(int hours, int minutess, int day_of_week) {
+        //Check if the alarm is in the future
+        mCalendar.setTimeInMillis(System.currentTimeMillis());
+        Calendar currrentTime = Calendar.getInstance();
+        currrentTime.setTimeInMillis(System.currentTimeMillis());
+
+        mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
+        mCalendar.set(Calendar.HOUR_OF_DAY, hours);
+        mCalendar.set(Calendar.MINUTE, minutess);
+        mCalendar.set(Calendar.SECOND, 0);
+        Log.i(LOG_TAG, "Setting alarm for " + day_of_week + " time: " + hours +":" + minutess);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY*7,  alarmIntent);
+
+    }
+
+    private void cancelAlarm() {
+        if (alarmManager != null) {
+            alarmManager.cancel(alarmIntent);
+        }
     }
 
     @Override
@@ -471,6 +570,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor data){
         if(data == null || data.getCount() < 1){return;}
         if(data.moveToFirst()){
+            int _IDColumnIndex = data.getColumnIndex(AlarmEntry._ID);
             int user_descriptionColumnIndex = data.getColumnIndex(AlarmEntry.USER_DESCRIPTION);
             int file_nameColumnIndex = data.getColumnIndex(AlarmEntry.FILE_NAME);
             int alarm_activeColumnIndex = data.getColumnIndex(AlarmEntry.ALARM_ACTIVE);
@@ -484,10 +584,13 @@ public class VoiceRecorderActivity extends AppCompatActivity
             int alarmHour = data.getInt(alarm_hourColumnIndex);
             int alarmMinute = data.getInt(alarm_minuteColumnIndex);
             String alarmDaysOfWeek = data.getString(days_of_weekColumnIndex);
+            int thisAlarmID = (int) data.getLong(_IDColumnIndex);
 
             mRecordingName.setText(user_Description);
             mHours.setText(AlarmUtils.timeFormatter(alarmHour));
             mMinutes.setText(AlarmUtils.timeFormatter(alarmMinute));
+            mAlarmId.setText(Integer.toString(thisAlarmID));
+
 
             int[] days = AlarmUtils.StringToIntArray(alarmDaysOfWeek);
             mon.setChecked(days[0] == 1);

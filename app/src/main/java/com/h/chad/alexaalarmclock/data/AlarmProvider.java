@@ -27,6 +27,7 @@ public class AlarmProvider extends ContentProvider {
     private AlarmDbHelper mDBHelper;
     private final static int ALARMS = 100;
     private final static int ALARM_ID = 101;
+    public static long mThisIsMyAlarmId;
     private final static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         sUriMatcher.addURI(CONTENT_AUTHORITY, PATH_ALARMS, ALARMS);
@@ -134,6 +135,7 @@ public class AlarmProvider extends ContentProvider {
             return null;
         }
         getContext().getContentResolver().notifyChange(uri, null);
+        mThisIsMyAlarmId = id;
         return ContentUris.withAppendedId(uri, id);
 
     }

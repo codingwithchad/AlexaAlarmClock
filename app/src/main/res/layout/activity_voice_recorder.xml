@@ -102,6 +102,11 @@
         android:layout_below="@+id/time_selected"
         android:gravity="center">
         <CheckBox
+            android:id="@+id/cb_sunday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Sunday"/>
+        <CheckBox
             android:id="@+id/cb_monday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -131,12 +136,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Saturday"/>
-        <CheckBox
-            android:id="@+id/cb_sunday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Sunday"/>
-
     </LinearLayout>
 
     <LinearLayout
@@ -160,5 +159,11 @@
 
 
     </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_alarmID"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>

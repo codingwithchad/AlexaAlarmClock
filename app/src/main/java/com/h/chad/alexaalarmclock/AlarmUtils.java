@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
  * Created by chad on 3/24/2017.
  */
 
-public class AlarmUtils{
+public class AlarmUtils extends AlarmClockActivity{
 
 
     public static int[] StringToIntArray(String daysString) {
@@ -23,5 +23,9 @@ public class AlarmUtils{
     public static String timeFormatter(int unformatted){
         DecimalFormat formatTime = new DecimalFormat("00");
         return formatTime.format(unformatted);
+    }
+
+    public static void setAllAlarms(){
+
     }
 }

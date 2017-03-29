@@ -34,21 +34,10 @@ import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
 
 public class AlarmCursorAdapter extends CursorAdapter{
 
-    private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
-    public Calendar mCalendar = Calendar.getInstance();
+
 
     private MediaPlayer mediaPlayer;
 
-    //Days of week per Android Calendar
-    //https://developer.android.com/reference/java/util/Calendar.html
-    private final static int SUNDAY    = 1;
-    private final static int MONDAY    = 2;
-    private final static int TUESDAY   = 3;
-    private final static int WEDNESDAY = 4;
-    private final static int THURSDAY  = 5;
-    private final static int FRIDAY    = 6;
-    private final static int SATURDAY  = 7;
     private AudioManager audioManager;
     AudioManager.OnAudioFocusChangeListener afcl =
             new AudioManager.OnAudioFocusChangeListener(){
@@ -129,71 +118,8 @@ public class AlarmCursorAdapter extends CursorAdapter{
                     e.printStackTrace();
                 }
                 mediaPlayer.start();
-
             }
         });
-
-        /*
-        * Setting the alarm for each list item
-        * */
-        if (alarmIsSet.isChecked()) {
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            intent.putExtra("extraString", fileName);
-            alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            if(daysArray[0] == 1) {
-                setSingleAlarm(alarmHour, alarmMinutes, SUNDAY);
-            }
-            if (daysArray[1] == 1){
-                setSingleAlarm(alarmHour, alarmMinutes, MONDAY);
-            }
-            if (daysArray[2] == 1){
-                setSingleAlarm(alarmHour, alarmMinutes, TUESDAY);
-            }
-            if (daysArray[3] == 1){
-                setSingleAlarm(alarmHour, alarmMinutes, WEDNESDAY);
-            }
-            if (daysArray[4] == 1){
-                setSingleAlarm(alarmHour, alarmMinutes, THURSDAY);
-            }
-            if (daysArray[5] == 1){
-                setSingleAlarm(alarmHour, alarmMinutes, FRIDAY);
-            }
-            if (daysArray[6] == 1){
-                setSingleAlarm(alarmHour, alarmMinutes, SATURDAY);
-            }
-        }
-    }
-
-    private void setSingleAlarm(int hours, int minutess, int day_of_week) {
-        //Check if the alarm is in the future
-        mCalendar.setTimeInMillis(System.currentTimeMillis());
-        Calendar currrentTime = Calendar.getInstance();
-        currrentTime.setTimeInMillis(System.currentTimeMillis());
-
-        mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
-        mCalendar.set(Calendar.HOUR_OF_DAY, hours);
-        mCalendar.set(Calendar.MINUTE, minutess);
-        mCalendar.set(Calendar.SECOND, 0);
-
-        if (mCalendar.before(currrentTime)) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
-                    alarmIntent);
-
-            Log.i(LOG_TAG, "Alarm is set for " + hours + ":" + minutess + "Day: " + day_of_week);
-        }
-
-        else {
-            cancelAlarm();
-            Log.i(LOG_TAG, "Alarm is in the future, No Alarm set ");
-        }
-    }
-
-
-    private void cancelAlarm() {
-        if (alarmManager != null) {
-            alarmManager.cancel(alarmIntent);
-        }
     }
 
     //Broke out the days of the week into its own method
