@@ -7,12 +7,11 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.provider.AlarmClock;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,13 +19,12 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
+
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
 
-import static android.content.Context.ALARM_SERVICE;
+
 import static android.view.View.GONE;
 import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
 
@@ -145,17 +143,23 @@ public class AlarmCursorAdapter extends CursorAdapter{
             alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             if(daysArray[0] == 1) {
                 setSingleAlarm(alarmHour, alarmMinutes, SUNDAY);
-            }else if (daysArray[1] == 1){
+            }
+            if (daysArray[1] == 1){
                 setSingleAlarm(alarmHour, alarmMinutes, MONDAY);
-            }else if (daysArray[1] == 1){
+            }
+            if (daysArray[2] == 1){
                 setSingleAlarm(alarmHour, alarmMinutes, TUESDAY);
-            }else if (daysArray[1] == 1){
+            }
+            if (daysArray[3] == 1){
                 setSingleAlarm(alarmHour, alarmMinutes, WEDNESDAY);
-            }else if (daysArray[1] == 1){
+            }
+            if (daysArray[4] == 1){
                 setSingleAlarm(alarmHour, alarmMinutes, THURSDAY);
-            }else if (daysArray[1] == 1){
+            }
+            if (daysArray[5] == 1){
                 setSingleAlarm(alarmHour, alarmMinutes, FRIDAY);
-            }else if (daysArray[1] == 1){
+            }
+            if (daysArray[6] == 1){
                 setSingleAlarm(alarmHour, alarmMinutes, SATURDAY);
             }
         }
@@ -171,9 +175,10 @@ public class AlarmCursorAdapter extends CursorAdapter{
         mCalendar.set(Calendar.HOUR_OF_DAY, hours);
         mCalendar.set(Calendar.MINUTE, minutess);
         mCalendar.set(Calendar.SECOND, 0);
-        if (mCalendar.after(currrentTime)) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
-                    0, alarmIntent);
+
+        if (mCalendar.before(currrentTime)) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
+                    alarmIntent);
 
             Log.i(LOG_TAG, "Alarm is set for " + hours + ":" + minutess + "Day: " + day_of_week);
         }

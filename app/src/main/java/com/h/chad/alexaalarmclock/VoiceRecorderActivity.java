@@ -410,6 +410,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
                 }else{
                     values.put(AlarmEntry.ALARM_DAYS, daysForDatabase);
                 }
+
                 //Adding a new alarm if mCurrentAlarmUri is null
                 if(mCurrentAlarmUri == null){
                     Uri newUri = getContentResolver().insert(
