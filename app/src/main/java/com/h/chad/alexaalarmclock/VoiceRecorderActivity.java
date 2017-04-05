@@ -16,7 +16,6 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PersistableBundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -167,13 +166,14 @@ public class VoiceRecorderActivity extends AppCompatActivity
         mAlarmId = (TextView)findViewById(R.id.tv_alarmID);
         mSaveButton = (Button) findViewById(R.id.button_save);
         mCancelButton = (Button) findViewById(R.id.button_cancel);
+        sun = (CheckBox) findViewById(R.id.cb_sunday);
         mon = (CheckBox) findViewById(R.id.cb_monday);
         tue = (CheckBox) findViewById(R.id.cb_tuesday);
         wed = (CheckBox) findViewById(R.id.cb_wednesday);
         thu = (CheckBox) findViewById(R.id.cb_thursday);
         fri = (CheckBox) findViewById(R.id.cb_friday);
         sat = (CheckBox) findViewById(R.id.cb_saturday);
-        sun = (CheckBox) findViewById(R.id.cb_sunday);
+
     }
 
     private void setCurrentTime() {
@@ -377,8 +377,8 @@ public class VoiceRecorderActivity extends AppCompatActivity
         if (mFileSavePath != null) {
             String path = mFileSavePath;
             String file = path.substring(path.lastIndexOf(File.separator) + 1);
-            new File(mFileSavePath).delete();
-            Log.e(LOG_TAG, "File name is:" + file);
+            boolean isDeleted = new File(mFileSavePath).delete();
+            Log.e(LOG_TAG, "File name is:" + file + " " + isDeleted);
         }
     }
 
@@ -465,8 +465,6 @@ public class VoiceRecorderActivity extends AppCompatActivity
             }
         });
     }
-
-
     //https://developer.android.com/reference/java/util/Calendar.html
     //Day of week is 1 to 7 and this array is 0 to 6.
     //Sunday is 1, Monday 2, Tuesday 3, Wedensday 4, Thursday 5, Friday 6, Saturday 7
@@ -497,13 +495,16 @@ public class VoiceRecorderActivity extends AppCompatActivity
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         Calendar currrentTime = Calendar.getInstance();
         currrentTime.setTimeInMillis(System.currentTimeMillis());
-        int today = Calendar.DAY_OF_WEEK;
-        Log.e(LOG_TAG, "today is: " + currrentTime.get(Calendar.DAY_OF_WEEK));
+        int today = currrentTime.get(Calendar.DAY_OF_WEEK) -1; //subtract 1 to match the array
 
 
-        int day_of_week = mCalendar.getFirstDayOfWeek();
-        Log.e(LOG_TAG, "First day of the week is: " + day_of_week);
-        if(isActive) {
+        AlarmUtils.setNextAlarm(daysArray, today);
+        Log.i(LOG_TAG, " ########## Current day is " + AlarmUtils.dayToString(today));
+
+        int day_of_week = 2;
+
+        //Set the alarm if it is later today
+        if(isActive && daysArray[today] == 1 && mCalendar.after(currrentTime)) {
             //Check if the alarm is in the future
 
 
