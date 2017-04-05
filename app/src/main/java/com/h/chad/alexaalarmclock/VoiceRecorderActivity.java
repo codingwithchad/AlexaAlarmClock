@@ -75,7 +75,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
 
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
-    public Calendar mCalendar = Calendar.getInstance();
+    public  Calendar mCalendar = Calendar.getInstance();
 
     //Days of week per Android Calendar
     //https://developer.android.com/reference/java/util/Calendar.html
@@ -472,74 +472,55 @@ public class VoiceRecorderActivity extends AppCompatActivity
     //Sunday is 1, Monday 2, Tuesday 3, Wedensday 4, Thursday 5, Friday 6, Saturday 7
     public int[] daysOfTheWeek(){
         int[] days = new int[7];
-        days[0] = (mon.isChecked()) ? 1 : 0;
-        days[1] = (tue.isChecked()) ? 1 : 0;
-        days[2] = (wed.isChecked()) ? 1 : 0;
-        days[3] = (thu.isChecked()) ? 1 : 0;
-        days[4] = (fri.isChecked()) ? 1 : 0;
-        days[5] = (sat.isChecked()) ? 1 : 0;
-        days[6] = (sun.isChecked()) ? 1 : 0;
+        days[0] = (sun.isChecked()) ? 1 : 0;
+        days[1] = (mon.isChecked()) ? 1 : 0;
+        days[2] = (tue.isChecked()) ? 1 : 0;
+        days[3] = (wed.isChecked()) ? 1 : 0;
+        days[4] = (thu.isChecked()) ? 1 : 0;
+        days[5] = (fri.isChecked()) ? 1 : 0;
+        days[6] = (sat.isChecked()) ? 1 : 0;
+
         return days;
     }
-    /*
+         /*
         * Setting the alarm on save, for each day of the week
         * */
     public void setSingleAlarm(boolean isActive, Context context,
                                int alarmHour, int alarmMinutes, int[] daysArray,
                                int alarmID){
-        if (isActive) {
 
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            intent.putExtra("extraString", mFileSavePath);
-            alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            //alarmIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            if(daysArray[0] == 1) {
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+SUNDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, SUNDAY);
-            }
-            if (daysArray[1] == 1){
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+MONDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, MONDAY);
-            }
-            if (daysArray[2] == 1){
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+TUESDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, TUESDAY);
-            }
-            if (daysArray[3] == 1){
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+WEDNESDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, WEDNESDAY);
-            }
-            if (daysArray[4] == 1){
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+THURSDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, THURSDAY);
-            }
-            if (daysArray[5] == 1){
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+FRIDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, FRIDAY);
-            }
-            if (daysArray[6] == 1){
-                alarmIntent = PendingIntent.getBroadcast(context, (alarmID+SATURDAY), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setSingleAlarm(alarmHour, alarmMinutes, SATURDAY);
-            }
-        }
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("extraString", mFileSavePath);
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    }
-
-    private void setSingleAlarm(int hours, int minutess, int day_of_week) {
-        //Check if the alarm is in the future
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         Calendar currrentTime = Calendar.getInstance();
         currrentTime.setTimeInMillis(System.currentTimeMillis());
+        int today = Calendar.DAY_OF_WEEK;
+        Log.e(LOG_TAG, "today is: " + currrentTime.get(Calendar.DAY_OF_WEEK));
 
-        mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
-        mCalendar.set(Calendar.HOUR_OF_DAY, hours);
-        mCalendar.set(Calendar.MINUTE, minutess);
-        mCalendar.set(Calendar.SECOND, 0);
-        Log.i(LOG_TAG, "Setting alarm for " + day_of_week + " time: " + hours +":" + minutess);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY*7,  alarmIntent);
 
+        int day_of_week = mCalendar.getFirstDayOfWeek();
+        Log.e(LOG_TAG, "First day of the week is: " + day_of_week);
+        if(isActive) {
+            //Check if the alarm is in the future
+
+
+            mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
+            mCalendar.set(Calendar.HOUR_OF_DAY, alarmHour);
+            mCalendar.set(Calendar.MINUTE, alarmMinutes);
+            mCalendar.set(Calendar.SECOND, 0);
+            Log.i(LOG_TAG, "Setting alarm for " + day_of_week + " time: " + alarmHour + ":" + alarmMinutes);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, alarmIntent);
+        }
+        else{
+            cancelAlarm();
+        }
     }
+
+
 
     private void cancelAlarm() {
         if (alarmManager != null) {
