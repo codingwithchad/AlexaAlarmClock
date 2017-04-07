@@ -76,16 +76,6 @@ public class VoiceRecorderActivity extends AppCompatActivity
     private PendingIntent alarmIntent;
     public  Calendar mCalendar = Calendar.getInstance();
 
-    //Days of week per Android Calendar
-    //https://developer.android.com/reference/java/util/Calendar.html
-    private final static int SUNDAY    = 1;
-    private final static int MONDAY    = 2;
-    private final static int TUESDAY   = 3;
-    private final static int WEDNESDAY = 4;
-    private final static int THURSDAY  = 5;
-    private final static int FRIDAY    = 6;
-    private final static int SATURDAY  = 7;
-
     private LinearLayout mTime_button;
 
     protected int mHoursForDB;
@@ -458,7 +448,8 @@ public class VoiceRecorderActivity extends AppCompatActivity
                 //The alarm was successfully added or updates, we should set the alarm
                 if(success && alarmID >= 0 ){
 
-                    setSingleAlarm(true, c, mHoursForDB, mMinutesForDB, alarmDays, alarmID );
+                    AlarmUtils.setNextAlarm(true, c, mHoursForDB, mMinutesForDB,
+                            alarmDays, alarmID, mFileSavePath, 0);
                 }
 
             finish();
@@ -480,54 +471,7 @@ public class VoiceRecorderActivity extends AppCompatActivity
 
         return days;
     }
-         /*
-        * Setting the alarm on save, for each day of the week
-        * */
-    public void setSingleAlarm(boolean isActive, Context context,
-                               int alarmHour, int alarmMinutes, int[] daysArray,
-                               int alarmID){
 
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("extraString", mFileSavePath);
-        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        mCalendar.setTimeInMillis(System.currentTimeMillis());
-        Calendar currrentTime = Calendar.getInstance();
-        currrentTime.setTimeInMillis(System.currentTimeMillis());
-        int today = currrentTime.get(Calendar.DAY_OF_WEEK) -1; //subtract 1 to match the array
-
-
-        AlarmUtils.setNextAlarm(daysArray, today);
-        Log.i(LOG_TAG, " ########## Current day is " + AlarmUtils.dayToString(today));
-
-        int day_of_week = 2;
-
-        //Set the alarm if it is later today
-        if(isActive && daysArray[today] == 1 && mCalendar.after(currrentTime)) {
-            //Check if the alarm is in the future
-
-
-            mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
-            mCalendar.set(Calendar.HOUR_OF_DAY, alarmHour);
-            mCalendar.set(Calendar.MINUTE, alarmMinutes);
-            mCalendar.set(Calendar.SECOND, 0);
-            Log.i(LOG_TAG, "Setting alarm for " + day_of_week + " time: " + alarmHour + ":" + alarmMinutes);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, alarmIntent);
-        }
-        else{
-            cancelAlarm();
-        }
-    }
-
-
-
-    private void cancelAlarm() {
-        if (alarmManager != null) {
-            alarmManager.cancel(alarmIntent);
-        }
-    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -575,13 +519,13 @@ public class VoiceRecorderActivity extends AppCompatActivity
 
 
             int[] days = AlarmUtils.StringToIntArray(alarmDaysOfWeek);
-            mon.setChecked(days[0] == 1);
-            tue.setChecked(days[1] == 1);
-            wed.setChecked(days[2] == 1);
-            thu.setChecked(days[3] == 1);
-            fri.setChecked(days[4] == 1);
-            sat.setChecked(days[5] == 1);
-            sun.setChecked(days[6] == 1);
+            sun.setChecked(days[0] == 1);
+            mon.setChecked(days[1] == 1);
+            tue.setChecked(days[2] == 1);
+            wed.setChecked(days[3] == 1);
+            thu.setChecked(days[4] == 1);
+            fri.setChecked(days[5] == 1);
+            sat.setChecked(days[6] == 1);
         }
     }
 

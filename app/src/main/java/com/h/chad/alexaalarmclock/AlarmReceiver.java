@@ -24,8 +24,14 @@ public class AlarmReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        int alarmHour = intent.getIntExtra("extraAlarmHour", 0);
+        int alarmMinute = intent.getIntExtra("extraAlarmMinute", 0);
+        int alarmID = intent.getIntExtra("extraAlarmMinute", 0);
+        int [] day_checked = intent.getIntArrayExtra("extraDay_checked");
         String fileName = intent.getStringExtra("extraString");
         Toast.makeText(context, "ALARM STARTED", Toast.LENGTH_SHORT).show();
+        Log.e(LOG_TAG, "Alarm Receiver received time " + alarmHour + ":" + alarmMinute);
+
         Log.e(LOG_TAG, "Alarm Receiver received filename " + fileName);
 
         if(fileName == null)
@@ -42,6 +48,10 @@ public class AlarmReceiver extends BroadcastReceiver{
             e.printStackTrace();
         }
         mediaPlayer.start();
+        if(alarmID > 0) {
+            AlarmUtils.setNextAlarm(true, context, alarmHour, alarmMinute, day_checked, alarmID, fileName, 1);
+        }
+
 
     }
 }

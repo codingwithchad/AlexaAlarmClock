@@ -124,41 +124,43 @@ public class AlarmCursorAdapter extends CursorAdapter{
 
     //Broke out the days of the week into its own method
     private void daysOfWeekVisible(int[] day, View view) {
+        TextView sun = (TextView) view.findViewById(R.id.textview_Sunday);
         TextView mon = (TextView) view.findViewById(R.id.textview_Monday);
         TextView tue = (TextView) view.findViewById(R.id.textview_Tueday);
         TextView wed = (TextView) view.findViewById(R.id.textview_Wednesday);
         TextView thu = (TextView) view.findViewById(R.id.textview_Thursday);
         TextView fri = (TextView) view.findViewById(R.id.textview_Friday);
         TextView sat = (TextView) view.findViewById(R.id.textview_Saturday);
-        TextView sun = (TextView) view.findViewById(R.id.textview_Sunday);
+
         if(day[0] == 1)
-            mon.setVisibility(View.VISIBLE) ;
-        else
-            mon.setVisibility(GONE);
-        if(day[1] == 1)
-            tue.setVisibility(View.VISIBLE) ;
-        else
-            tue.setVisibility(GONE);
-        if(day[2] == 1)
-            wed.setVisibility(View.VISIBLE) ;
-        else
-            wed.setVisibility(GONE);
-        if(day[3] == 1)
-            thu.setVisibility(View.VISIBLE) ;
-        else
-            thu.setVisibility(GONE);
-        if(day[4] == 1)
-            fri.setVisibility(View.VISIBLE) ;
-        else
-            fri.setVisibility(GONE);
-        if(day[5] == 1)
-            sat.setVisibility(View.VISIBLE) ;
-        else
-            sat.setVisibility(GONE);
-        if(day[6] == 1)
             sun.setVisibility(View.VISIBLE) ;
         else
             sun.setVisibility(GONE);
+        if(day[1] == 1)
+            mon.setVisibility(View.VISIBLE) ;
+        else
+            mon.setVisibility(GONE);
+        if(day[2] == 1)
+            tue.setVisibility(View.VISIBLE) ;
+        else
+            tue.setVisibility(GONE);
+        if(day[3] == 1)
+            wed.setVisibility(View.VISIBLE) ;
+        else
+            wed.setVisibility(GONE);
+        if(day[4] == 1)
+            thu.setVisibility(View.VISIBLE) ;
+        else
+            thu.setVisibility(GONE);
+        if(day[5] == 1)
+            fri.setVisibility(View.VISIBLE) ;
+        else
+            fri.setVisibility(GONE);
+        if(day[6] == 1)
+            sat.setVisibility(View.VISIBLE) ;
+        else
+            sat.setVisibility(GONE);
+
     }
     //Relase Media Player
     private void relaseMediaPlayer(){

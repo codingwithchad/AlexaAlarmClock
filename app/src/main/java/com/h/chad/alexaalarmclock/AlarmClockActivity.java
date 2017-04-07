@@ -55,7 +55,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
         });
 
         getLoaderManager().initLoader(URL_LOADER_ID, null, this);
-
     }
     /*Pressing the FAB sends user to the voice recorder activity to create a new alarm*/
     private void setupFAB() {
