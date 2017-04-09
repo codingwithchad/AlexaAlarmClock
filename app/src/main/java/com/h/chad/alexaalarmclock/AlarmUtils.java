@@ -10,7 +10,9 @@ import android.util.Log;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.os.Build.VERSION_CODES.M;
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
 /**
@@ -57,8 +59,17 @@ public class AlarmUtils extends AlarmClockActivity{
         Calendar currrentTime = Calendar.getInstance();
         currrentTime.setTimeInMillis(System.currentTimeMillis());
         int today = currrentTime.get(Calendar.DAY_OF_WEEK) -1; //subtract 1 to match the array
-        today += nextAlarm;
-        int daysToAdd = daysAdded(day_checked, today);
+
+        int daysToAdd = 0;
+
+        //If the alarm already ran once per day, we need to find the NEXT occurance
+        //not todays already ran occuracne
+        if(nextAlarm ==1 ){
+            daysToAdd = daysAdded(day_checked, today+1);
+        }
+        else{
+            daysToAdd = daysAdded(day_checked, today);
+        }
         Log.i(LOG_TAG, "Add " + daysToAdd + "  to the next alarm");
 
         Intent intent = new Intent(context, AlarmReceiver.class);
@@ -73,48 +84,44 @@ public class AlarmUtils extends AlarmClockActivity{
         alarmIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mCalendar.setTimeInMillis(System.currentTimeMillis());
-
-
-
         //AlarmUtils.setNextAlarm(daysArray, today);
         Log.i(LOG_TAG, " ########## Current day is " + AlarmUtils.dayToString(today));
 
-        int day_of_week = 2;
-
-        //Set the alarm if it is later today
-        if(isActive && day_checked[today] == 1 && mCalendar.after(currrentTime)) {
-            //Check if the alarm is in the future
-
-
-            mCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
+            mCalendar.set(Calendar.DAY_OF_WEEK, today);
             mCalendar.set(Calendar.HOUR_OF_DAY, alarmHour);
             mCalendar.set(Calendar.MINUTE, alarmMinutes);
             mCalendar.set(Calendar.SECOND, 0);
-            Log.i(LOG_TAG, "Setting alarm for " + day_of_week + " time: " + alarmHour + ":" + alarmMinutes);
+            mCalendar.set(Calendar.MILLISECOND, 0);
+            Log.i(LOG_TAG, "Setting alarm for " + dayToString(today) + " time: " + alarmHour + ":" + alarmMinutes);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, alarmIntent);
-        }
-        else{
-            cancelAlarm();
-        }
+                    AlarmManager.INTERVAL_DAY + daysToAdd, alarmIntent);
+
     }
 
+    //Add days until the next check is checked, rotating up to 7 days for the week.
     private static int daysAdded(int[] day_checked, int today){
-        int i = 0;
+
         int k = 0;
-        for(i = today; i <= day_checked.length; i++){
+        if(today == 7){
+            today = 6;
+        }
+        for(int i = today; i <= day_checked.length; i++){
             if(day_checked[i] == 1){
                 Log.i(LOG_TAG, "today is " + dayToString(today));
                 Log.i(LOG_TAG, "There should be an alarm set for " + dayToString(i));
+                Log.i(LOG_TAG, "i: " +i + " k: " + k);
                 return k;
             }
-            if(i == 6){
-                i = 0;
+            if(i >= 6){
+                i = -1;
             }
             k++;
-            if(k>=7) {
-                //cancel alarm, no alarm on for 7 days
-                return 0;
+            if(k == 6) {
+                //add 7 days if nothing is returned after six days
+                //this means start the alarm for the same time one week from now
+                Log.e(LOG_TAG, "########### add " + k + " days");
+                return 7;
+
             }
         }
         return k;

@@ -3,6 +3,7 @@ package com.h.chad.alexaalarmclock;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.util.Calendar;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
+
+import static android.media.CamcorderProfile.get;
 
 /**
  * Created by chad on 3/22/2017.
@@ -31,8 +34,12 @@ public class AlarmReceiver extends BroadcastReceiver{
         String fileName = intent.getStringExtra("extraString");
         Toast.makeText(context, "ALARM STARTED", Toast.LENGTH_SHORT).show();
         Log.e(LOG_TAG, "Alarm Receiver received time " + alarmHour + ":" + alarmMinute);
+        java.util.Calendar rightNow = java.util.Calendar.getInstance();
 
-        Log.e(LOG_TAG, "Alarm Receiver received filename " + fileName);
+        int nowHour = rightNow.get(java.util.Calendar.HOUR_OF_DAY);
+        int nowMinute = rightNow.get(java.util.Calendar.MINUTE);
+        int today = rightNow.get(java.util.Calendar.DAY_OF_WEEK) -1;
+        int nowSeconds = rightNow.get(java.util.Calendar.SECOND);
 
         if(fileName == null)
             Log.e(LOG_TAG, "File name is null " + fileName);
@@ -47,10 +54,13 @@ public class AlarmReceiver extends BroadcastReceiver{
         }catch (IOException e){
             e.printStackTrace();
         }
-        mediaPlayer.start();
-        if(alarmID > 0) {
+        if( day_checked[today]== 1 && nowHour == alarmHour && nowMinute == alarmMinute){
+
+            mediaPlayer.start();
+            //Set alarm for future days
             AlarmUtils.setNextAlarm(true, context, alarmHour, alarmMinute, day_checked, alarmID, fileName, 1);
         }
+
 
 
     }
