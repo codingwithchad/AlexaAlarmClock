@@ -126,7 +126,7 @@ public class AlarmUtils extends AlarmClockActivity{
         }
         return k;
     }
-    private static void cancelAlarm() {
+    public static void cancelAlarm() {
         if (alarmManager != null) {
             alarmManager.cancel(alarmIntent);
         }

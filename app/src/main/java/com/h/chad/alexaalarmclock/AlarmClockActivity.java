@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
@@ -30,17 +32,23 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = AlarmClock.class.getSimpleName();
     private static final int URL_LOADER_ID = 1;
     private AlarmCursorAdapter mAlarmCursorAdapter;
+
+
     FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_clock);
+
         setupFAB();                 //function for the FAB's onclick listener.
+
+
 
         ListView lvAlarms = (ListView)findViewById(R.id.alarm_list);
         lvAlarms.setEmptyView(findViewById(R.id.empty_list));
         mAlarmCursorAdapter = new AlarmCursorAdapter(this, null);
+
         lvAlarms.setAdapter(mAlarmCursorAdapter);
 
         lvAlarms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -55,6 +63,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
         });
 
         getLoaderManager().initLoader(URL_LOADER_ID, null, this);
+
     }
     /*Pressing the FAB sends user to the voice recorder activity to create a new alarm*/
     private void setupFAB() {
@@ -68,6 +77,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>{
             }
         });
     }
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

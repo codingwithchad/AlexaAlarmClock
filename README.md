@@ -5,8 +5,7 @@ I am not a morning person, I don't want to talk to Alexa or anyone else until af
 
 I found a hack to record an MP3 of my voice giving Alexa the command to start music, put the mp3 file in my phone's Alarm section.
 Then at my wake-up alarm time my Mp3 file of my command goes off and Alexa plays music. The hack workedm but it is a lot of work, The next day I wanted a different station, or during a winter storm, I wanted to wake up to the news weather and traffic (ALEXA,  play KOMO radio) one day and music (ALEXA, Play lindsey Sterling) the next. Also my command in mp3 on my phone repeats and repeats until I get up and turn it off. (Alexa, Play Lindsey Sterling)(Alexa, Play Lindsey Sterline) (Alexa Play Lindsey Sterline).....that was aweful, so I get to the next room I have my music station playing, along with my command repeating and repeating!
-
-I came up with the idea of The Alexa Alarm Clock. 
+ 
 ### The goal of this app is
 
 1) record my voice giving Alexa a command.

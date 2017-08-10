@@ -2,6 +2,8 @@ package com.h.chad.alexaalarmclock;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,20 +13,24 @@ import java.util.Calendar;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 
 import com.h.chad.alexaalarmclock.data.AlarmContract.AlarmEntry;
+import com.h.chad.alexaalarmclock.data.AlarmProvider;
 
 
+import static android.R.attr.id;
 import static android.view.View.GONE;
 import static com.h.chad.alexaalarmclock.VoiceRecorderActivity.LOG_TAG;
 
@@ -37,7 +43,7 @@ public class AlarmCursorAdapter extends CursorAdapter{
 
 
     private MediaPlayer mediaPlayer;
-
+    private  CheckBox alarmIsSet;
     private AudioManager audioManager;
     AudioManager.OnAudioFocusChangeListener afcl =
             new AudioManager.OnAudioFocusChangeListener(){
@@ -76,7 +82,7 @@ public class AlarmCursorAdapter extends CursorAdapter{
         CheckBox alarmIsSet = (CheckBox) view.findViewById(R.id.checkbox_on_off);
 
         //Get the column index for each item
-        int idColumnIndex = cursor.getColumnIndex(AlarmEntry._ID);
+        final int idColumnIndex = cursor.getColumnIndex(AlarmEntry._ID);
         int descriptionColumnIndex = cursor.getColumnIndex(AlarmEntry.USER_DESCRIPTION);
         int filenameColumnIndex = cursor.getColumnIndex(AlarmEntry.FILE_NAME);
         int isActiveColumnIndex = cursor.getColumnIndex(AlarmEntry.ALARM_ACTIVE);
@@ -92,13 +98,15 @@ public class AlarmCursorAdapter extends CursorAdapter{
         final String fileName = cursor.getString(filenameColumnIndex);
         final int requestCode = cursor.getInt(idColumnIndex);
 
+
+
         alarmIsSet.setText(alarmDescrtipion);
         alarmIsSet.setChecked((active == 1));
         hours.setText(AlarmUtils.timeFormatter(alarmHour));
         minutes.setText(AlarmUtils.timeFormatter(alarmMinutes));
 
         String daysString = cursor.getString(daysColumnIndex);
-        int[] daysArray = AlarmUtils.StringToIntArray(daysString);
+        final int[] daysArray = AlarmUtils.StringToIntArray(daysString);
         daysOfWeekVisible(daysArray, view);
 
         ImageButton testSound = (ImageButton) view.findViewById(R.id.button_test_sound);
@@ -118,6 +126,31 @@ public class AlarmCursorAdapter extends CursorAdapter{
                     e.printStackTrace();
                 }
                 mediaPlayer.start();
+            }
+        });
+        alarmIsSet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                ContentValues values = new ContentValues();
+
+                Uri currentAlarmURI =
+                        ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, requestCode);
+                if(isChecked){
+
+                    values.put(AlarmEntry.ALARM_ACTIVE, 1);
+                    context.getContentResolver().update(
+                            currentAlarmURI, values, null, null);
+                    AlarmUtils.setNextAlarm(true, context, alarmHour, alarmMinutes,
+                            daysArray, requestCode, fileName, 0);
+
+                }
+                else{
+                    values.put(AlarmEntry.ALARM_ACTIVE, 0);
+                    context.getContentResolver().update(
+                            currentAlarmURI, values, null, null);
+                    AlarmUtils.cancelAlarm();
+                }
+
             }
         });
     }
@@ -156,10 +189,11 @@ public class AlarmCursorAdapter extends CursorAdapter{
             fri.setVisibility(View.VISIBLE) ;
         else
             fri.setVisibility(GONE);
-        if(day[6] == 1)
-            sat.setVisibility(View.VISIBLE) ;
+        if (day[6] == 1)
+            sat.setVisibility(View.VISIBLE);
         else
             sat.setVisibility(GONE);
+
 
     }
     //Relase Media Player
@@ -169,4 +203,6 @@ public class AlarmCursorAdapter extends CursorAdapter{
             mediaPlayer = null;
         }
     }
+
+
 }
